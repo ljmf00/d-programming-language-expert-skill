@@ -64,11 +64,9 @@ dmd -w main.d
 -I=<path>       # Include path
 -J=<path>       # String import path
 
-# Optimization
+# Optimization (DMD only has -O; use LDC for -O2/-O3)
 -O              # Enable optimizations
 -inline         # Enable function inlining
--O2             # More aggressive optimizations
--O3             # Maximum optimizations (experimental)
 
 # Debugging
 -g              # Generate debug symbols
@@ -88,7 +86,6 @@ dmd -w main.d
 
 # Special
 -run           # Compile and run
--dry-run       # Show what would be compiled
 -cov           # Enable code coverage
 -unittest      # Enable unit tests
 ```
@@ -127,7 +124,8 @@ ldc2 -betterC main.d
 # without GC, exceptions, or TypeInfo
 
 # Set entry point as extern(C)
-dmd -betterC -extern-std=c++ main.d
+dmd -betterC main.d
+# extern-std requires a C++ standard version: ldc2 -extern-std=c++17 main.d
 ```
 
 ### Code Coverage
@@ -343,8 +341,8 @@ dub remove vibe-d
 # List dependencies
 dub list
 
-# Show outdated packages
-dub outdated
+# Show installed packages
+dub list
 ```
 
 ### Build Cache
@@ -352,8 +350,7 @@ dub outdated
 # Clear build cache
 dub clean
 
-# Clear all caches
-dub clean-all
+# Clear all caches (no dub clean-all; use dub clean per-package or remove ~/.dub/packages manually)
 
 # Build with cache disabled
 dub build --force
@@ -964,7 +961,7 @@ dmd --version  # Show compiler version
 Key recent milestones:
 - **2.100.0** - DIP 1000 (scope), improvements to import
 - **2.105.0** - DIP 1030 (named arguments), DIP 1043 (shortened methods)
-- **2.110.0** - DIP 1052 (editions), DIP 1051 (bitfields)
+- **2.110.0** - DIP 1052 (editions), bitfields added to language (separate from DIP 1051 which is AliasAssign)
 - **Pending** - DIP 1048, DIP 1049, DIP 1053 (tuple unpacking), DIP 1054
 
 ## IDE and Editor Support

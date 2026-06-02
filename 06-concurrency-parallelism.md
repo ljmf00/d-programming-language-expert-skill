@@ -188,28 +188,7 @@ writeln("Sent int to worker");
 ```
 
 ### spawnLinked
-```d
-import std.concurrency : spawn;
-import std.stdio;
-
-// Spawn a linked thread
-auto tid = spawn({
-    writeln("Running in linked thread");
-});
-writeln("Thread spawned with tid: ", tid);
-```
-
-### spawnSingleton
-```d
-import std.concurrency : spawn;
-import std.stdio;
-
-// Spawn a singleton-like thread
-auto tid = spawn({
-    writeln("Singleton thread running");
-});
-writeln("Thread spawned: ", tid);
-```
+`spawnLinked` is not part of the `std.concurrency` public API; use `spawn` and handle `OwnerTerminated` / `LinkTerminated` messages in the child for error propagation patterns.
 
 ## std.parallelism
 
@@ -217,6 +196,7 @@ writeln("Thread spawned: ", tid);
 ```d
 import std.parallelism : parallel;
 import std.range : iota;
+import std.array : array;
 import std.stdio;
 
 // Parallel foreach
@@ -244,6 +224,7 @@ writeln("Result: ", result.front);
 ```d
 import std.parallelism;
 import std.range : iota;
+import std.array : array;
 import std.stdio;
 
 // Parallel map
@@ -252,21 +233,22 @@ auto result = taskPool.map!((i) => i * i)(arr);
 writeln("First result: ", result.front);
 ```
 
-### amap
+### amap (eager parallel map)
 ```d
 import std.parallelism;
 import std.stdio;
 
-// Parallel map
+// amap evaluates eagerly and returns an array (unlike taskPool.map which is lazy)
 int[] arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-auto result = taskPool.map!((i) => i * i)(arr);
-writeln("First result: ", result.front);
+int[] result = taskPool.amap!((i) => i * i)(arr);
+writeln("Result: ", result);  // [1, 4, 9, 16, 25, ...]
 ```
 
 ### areduce
 ```d
 import std.parallelism;
 import std.range : iota;
+import std.array : array;
 import std.stdio;
 
 // Parallel reduce
@@ -836,7 +818,7 @@ Fiber.State.{HOLD, EXEC, TERM}  // Fiber states
 Generator!T                // Coroutine generator
 ```
 
-### Message Pas```dg
+### Message Passing
 ```
 send(tid, msg)             // Send message
 receiveOnly!T()            // Receive specific type

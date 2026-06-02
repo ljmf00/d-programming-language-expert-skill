@@ -258,6 +258,7 @@ auto gen3 = new Generator!int({
         yield(counter++);
     }
 });
+// take(5) consumes 5 values; the underlying fiber stays suspended, not terminated
 auto firstFive = gen3.take(5).array;
 ```
 
@@ -601,7 +602,8 @@ version (linux) {
     import core.sys.posix.unistd : close;
     import std.stdio;
 
-    int epFd = epoll_create(8);
+    // epoll_create(size) arg is ignored since Linux 2.6.8; prefer epoll_create1(0)
+    int epFd = epoll_create1(0);
     scope(exit) close(epFd);
     writeln("epoll fd: ", epFd);
 }
@@ -807,10 +809,10 @@ auto fib = new Fiber({ Fiber.yield(); });
 
 // Fiber methods
 fib.call();           // Start or resume fiber
-fib.state;            // Current state (HOLD, TERMINATED)
+fib.state;            // Current state (HOLD, EXEC, TERM)
 
 // Fiber.yield() inside fiber body to suspend
-// Fiber.terminate() to forcefully stop
+// No Fiber.terminate() — let it run to completion or use Fiber.reset()
 ```
 
 ### Generator API Summary

@@ -44,8 +44,7 @@ current stable DMD and LDC. "Preview" requires an explicit flag.
 | [1035](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1035.md) | @system Variables | Preview | `-preview=systemVariables` |
 | [1038](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1038.md) | @mustuse | Default | — |
 | [1043](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1043.md) | Shortened Method Syntax | Default | — |
-| [1048](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1048.md) | Language Bitfields | Default (DMD 2.108+) | — |
-| [1051](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1051.md) | AliasAssign | Default | — |
+| [1048](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1048.md) | Language Bitfields | Default (DMD 2.108+/LDC 1.36+) | — |
 | [1052](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1052.md) | Editions | In progress | — |
 | [1053](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1053.md) | Tuple Unpacking | In progress | — |
 
@@ -487,7 +486,6 @@ DIP 1038: @mustuse                → @mustuse struct Result { ... }
 DIP 1043: shortened methods       → int add(int a, int b) => a + b
 DIP 1046: ref local variables     → ref int r = someVar; (not yet default)
 DIP 1048: language bitfields      → uint x:4; (DMD 2.108+, LDC 1.36+)
-DIP 1051: alias assign            → alias Foo = Bar; (reassignable alias)
 DIP 1052: editions                → in progress, not yet usable
 DIP 1053: tuple unpacking         → auto (a, b) = tup; (in progress)
 ```

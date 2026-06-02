@@ -90,6 +90,12 @@ been verified to compile with LDC.
 | [12-testing-documentation.md](12-testing-documentation.md) | **Testing & Documentation** | `unittest` blocks (advanced patterns), pre/post-condition `in`/`out` contracts, contract inheritance, DDoc documentation generation, DDoc macros (`$(D ...)`, `$(REF ...)`, etc.), embedded code examples. Use when writing tests or docs. |
 | [13-async-event-driven.md](13-async-event-driven.md) | **Async & Event-Driven** | Fiber schedulers, `std.concurrency.Generator!T` coroutines, POSIX epoll/kqueue/select, non-blocking I/O, event loop patterns, cooperative multitasking. Use when writing async D code without external frameworks. |
 
+### Pitfalls
+
+| File | Module | When to load |
+|------|--------|-------------|
+| [14-gotchas.md](14-gotchas.md) | **D Gotchas** | AI-relevant pitfalls: slice reference semantics, `string` immutability, `foreach ref` aliasing, struct vs class, `shared` threading model, DIP 1000 preview status, GC closure pressure, default float init (`NaN`), UFCS module scoping. Load alongside any task-specific subskill to avoid common mistakes. |
+
 ## Verification
 
 All code snippets in these subskill files pass compilation with LDC.

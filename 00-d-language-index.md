@@ -1,97 +1,62 @@
 ---
 name: d-lang-expert-index
 description: >-
-  D language skill index - entry point and navigation for the entire D
-  skill corpus. Lists all subskills with descriptions and cross-references
-  to help agents find the right knowledge module quickly.
+  D language quick-reference cheatsheet: naming conventions, import style,
+  common patterns, and a full navigation table mapping tasks to subskill files.
+  Load this alongside a task-specific subskill for an instant orientation.
 license: MIT
 metadata:
-  topics: index navigation reference
+  topics: index navigation reference cheatsheet
   order: 00
 ---
 
-# D Programming Language - Complete Skill Index
+# D Programming Language — Quick Reference
 
-This is a comprehensive collection of skills for the D programming language, designed to help AI assistants and developers write idiomatic, efficient D code.
+## Subskill Navigation
 
-## Quick Navigation
+| File | Module | When to load |
+|------|--------|-------------|
+| [01-core-language.md](01-core-language.md) | **Core Language** | Syntax, types, functions, OOP, attributes, error handling, conditional compilation |
+| [02-memory-management.md](02-memory-management.md) | **Memory Management** | GC, RAII, `@safe`/`@trusted`/`@system`, `const`/`immutable`/`shared`, copy/move, `@live` |
+| [03-ranges-algorithms.md](03-ranges-algorithms.md) | **Ranges & Algorithms** | Range primitives, `std.algorithm`, `std.range` combinators |
+| [04-templates-metaprogramming.md](04-templates-metaprogramming.md) | **Templates & Metaprogramming** | Template parameters, IFTI, CTFE, mixins, `std.meta`, `std.traits` |
+| [05-phobos-modules.md](05-phobos-modules.md) | **Phobos Standard Library** | `std.stdio`, `std.json`, `std.sumtype`, `std.typecons`, `std.conv`, sockets, datetime |
+| [06-concurrency-parallelism.md](06-concurrency-parallelism.md) | **Concurrency & Parallelism** | `std.concurrency`, `std.parallelism`, fibers, atomics, mutexes |
+| [07-tooling-ecosystem.md](07-tooling-ecosystem.md) | **Tooling & Ecosystem** | DMD/LDC compilers, DUB, DDoc, dfmt, DCD, debugging, profiling |
+| [08-evolution-best-practices.md](08-evolution-best-practices.md) | **Evolution & Best Practices** | DIPs, style guide, idioms, anti-patterns, testing strategies |
+| [09-runtime-internals.md](09-runtime-internals.md) | **Runtime Internals** | GC API, TypeInfo/`typeid`, `Object`/`Throwable`, array internals, `core.lifetime` |
+| [10-ffi-interop.md](10-ffi-interop.md) | **FFI & Interop** | `extern(C)`, `extern(C++)`, `extern(Objective-C)`, Better C mode, calling conventions |
+| [11-performance-optimization.md](11-performance-optimization.md) | **Performance Optimization** | `core.simd`, LDC inline/noinline, SoA vs AoS layout, PGO, LTO |
+| [12-testing-documentation.md](12-testing-documentation.md) | **Testing & Documentation** | `unittest` patterns, contracts (`in`/`out`), DDoc generation |
+| [13-async-event-driven.md](13-async-event-driven.md) | **Async & Event-Driven** | Fiber schedulers, `Generator!T`, POSIX epoll/kqueue, event loop patterns |
+| [14-gotchas.md](14-gotchas.md) | **D Gotchas** | AI-relevant pitfalls: slice semantics, `string` immutability, `shared`, DIP 1000 |
 
-| Skill | Description | Best For |
-|-------|-------------|----------|
-| [Core Language](01-core-language.md) | Syntax, types, control flow, functions, OOP | Writing basic D programs |
-| [Memory Management](02-memory-management.md) | GC, RAII, safety attributes, const/immutable | Safe, efficient memory handling |
-| [Ranges & Algorithms](03-ranges-algorithms.md) | Range programming, std.algorithm, std.range | Data processing pipelines |
-| [Templates & Metaprogramming](04-templates-metaprogramming.md) | Templates, mixins, CTFE, compile-time | Generic programming, code generation |
-| [Phobos Modules](05-phobos-modules.md) | Standard library modules reference | Using Phobos effectively |
-| [Concurrency & Parallelism](06-concurrency-parallelism.md) | Threads, message passing, parallelism | Multi-threaded applications |
-| [Tooling & Ecosystem](07-tooling-ecosystem.md) | DMD, LDC, DUB, documentation | Building and managing projects |
-| [Evolution & Best Practices](08-evolution-best-practices.md) | DIPs, idioms, patterns, style guide | Writing idiomatic D code |
+## Task → Subskill
 
-## Getting Started
+| Task | Subskill |
+|------|----------|
+| Write basic program | [Core Language](01-core-language.md) |
+| Handle memory safely | [Memory Management](02-memory-management.md) |
+| Process collections / data pipelines | [Ranges & Algorithms](03-ranges-algorithms.md) |
+| Generic / compile-time code | [Templates & Metaprogramming](04-templates-metaprogramming.md) |
+| Use std library (I/O, JSON, datetime…) | [Phobos Modules](05-phobos-modules.md) |
+| Multi-threaded / parallel code | [Concurrency & Parallelism](06-concurrency-parallelism.md) |
+| Build/package/format/lint | [Tooling & Ecosystem](07-tooling-ecosystem.md) |
+| Idiomatic patterns, DIPs | [Evolution & Best Practices](08-evolution-best-practices.md) |
+| Debug GC / runtime behavior | [Runtime Internals](09-runtime-internals.md) |
+| Call C/C++/ObjC from D | [FFI & Interop](10-ffi-interop.md) |
+| Optimize for speed / SIMD | [Performance Optimization](11-performance-optimization.md) |
+| Write tests / DDoc | [Testing & Documentation](12-testing-documentation.md) |
+| Async / event-driven I/O | [Async & Event-Driven](13-async-event-driven.md) |
+| Avoid subtle D bugs | [D Gotchas](14-gotchas.md) |
 
-### For Beginners
-1. Start with [Core Language](01-core-language.md) to understand syntax and types
-2. Learn [Memory Management](02-memory-management.md) for safe coding practices
-3. Explore [Phobos Modules](05-phobos-modules.md) for standard library usage
+## Naming Conventions
 
-### For Intermediate Developers
-1. Master [Ranges & Algorithms](03-ranges-algorithms.md) for data processing
-2. Learn [Templates & Metaprogramming](04-templates-metaprogramming.md) for generic code
-3. Study [Concurrency & Parallelism](06-concurrency-parallelism.md) for multi-threading
-
-### For Advanced Users
-1. Explore [Tooling & Ecosystem](07-tooling-ecosystem.md) for project management
-2. Follow [Evolution & Best Practices](08-evolution-best-practices.md) for idiomatic patterns
-
-## Key D Concepts
-
-### Language Philosophy
-- **Write Fast, Read Fast, Run Fast** - D combines productivity with performance
-- **Multi-paradigm** - Supports imperative, OOP, functional, and generic programming
-- **Memory Safe** - @safe subset eliminates entire classes of bugs
-- **Zero-cost Abstractions** - High-level features compile to efficient code
-
-### Core Features
-- **Static typing** with type inference (`auto`)
-- **Garbage collection** with manual memory management options
-- **RAII** (Resource Acquisition Is Initialization)
-- **Contracts** (preconditions, postconditions, invariants)
-- **Unit testing** built into the language
-- **Compile-time function execution** (CTFE)
-- **Template metaprogramming** with partial specialization
-- **Ranges** for generic sequence processing
-- **First-class functions** with closures and delegates
-- **Immutable data** for thread safety
-
-### Standard Library (Phobos)
-- **std.algorithm** - Generic algorithms (filter, map, reduce, sort)
-- **std.range** - Range primitives and composition
-- **std.array** - Array manipulation
-- **std.string** - String operations
-- **std.conv** - Type conversion
-- **std.format** - Formatting (printf-style)
-- **std.datetime** - Date and time handling
-- **std.numeric** - Numeric algorithms
-- **std.random** - Random number generation
-- **std.parallelism** - Parallel execution
-- **std.concurrency** - Message passing
-
-### Tooling
-- **DMD** - Reference compiler (pure D implementation)
-- **LDC** - LLVM-based compiler (better optimization)
-- **DUB** - Package manager and build system
-- **DDoc** - Documentation generator
-- **dfmt** - Code formatter
-- **DCD** - Code completion
-
-## Code Style Reference
-
-### Naming Conventions
 ```d
-// Modules: lowercase with underscores
+// Modules: lowercase_with_underscores
 module my_package.my_module;
 
-// Types (structs, classes, enums): PascalCase
+// Types (structs, classes, enums, interfaces): PascalCase
 struct MyStruct { }
 class MyClass {
     private int _privateField;
@@ -109,22 +74,24 @@ const int MAX_SIZE = 100;
 enum Color { red, green, blue }
 ```
 
-### Import Style
+## Import Style
+
 ```d
-// Preferred: specific imports
-import std.algorithm : filter, map, reduce;
+// Preferred: named selective imports
+import std.algorithm : filter, map, sort;
 import std.range : iota, take;
 
-// Avoid: wildcard imports (except for std)
-import std;  // Only in small scripts or REPL
+// Convenience wildcard — only in short scripts / REPL
+import std;
 ```
 
-### Function Style
+## Function Style
+
 ```d
-// Preferred: shortened method syntax (DIP 1043)
+// Shortened method syntax (DIP 1043, supported in current LDC/DMD)
 int add(int a, int b) pure nothrow @safe @nogc => a + b;
 
-// Traditional style (still valid)
+// Traditional style
 int multiply(int a, int b) pure nothrow @safe @nogc {
     return a * b;
 }
@@ -133,61 +100,49 @@ int multiply(int a, int b) pure nothrow @safe @nogc {
 ## Common Patterns
 
 ### Range Pipeline
+
 ```d
 import std;
 
 void main() {
-    iota(1, 101)          // 1 to 100
-        .filter!(a => a % 2 == 0)  // even numbers
-        .map!(a => a * a)          // square them
-        .array                    // materialize for sort
-        .sort                     // sort (already sorted, but demonstrates chaining)
-        .each!writeln;            // print each
+    iota(1, 101)
+        .filter!(a => a % 2 == 0)
+        .map!(a => a * a)
+        .each!writeln;
 }
 ```
 
 ### RAII Resource Management
+
 ```d
 import std.stdio : File;
 
-void processFile() {
-    auto file = File("data.txt", "r");  // Automatically closed at scope exit
-    foreach (line; file.byLine()) {
-        // Process line
-    }
-}  // file is automatically closed here
+void processFile(string path) {
+    auto file = File(path, "r");
+    foreach (line; file.byLine())
+        processLine(line);
+}  // file closed automatically at scope exit
 ```
 
-### Immutable Data Sharing
+### Immutable Data (Thread-Safe Sharing)
+
 ```d
 import std.stdio : writeln;
 
 void main() {
-    immutable data = [1, 2, 3, 4, 5];  // Thread-safe, shareable
-    writeln(data);
+    immutable int[] data = [1, 2, 3, 4, 5];
+    writeln(data);  // safe to share across threads
 }
 ```
 
-## Resources
+### Scope Guard
 
-- **Official Website**: https://dlang.org
-- **Language Specification**: https://dlang.org/spec/spec.html
-- **Phobos Documentation**: https://dlang.org/phobos/
-- **DUB Packages**: https://code.dlang.org
-- **D Forum**: https://forum.dlang.org
-- **D Wiki**: https://wiki.dlang.org
-- **DIPs**: https://github.com/dlang/DIPs
-- **D Tour (Interactive)**: https://tour.dlang.org
-
-## When to Use Which Skill
-
-| Task | Use This Skill |
-|------|---------------|
-| Write a simple program | [Core Language](01-core-language.md) |
-| Handle files/network | [Phobos Modules](05-phobos-modules.md) |
-| Process collections | [Ranges & Algorithms](03-ranges-algorithms.md) |
-| Create generic code | [Templates & Metaprogramming](04-templates-metaprogramming.md) |
-| Ensure memory safety | [Memory Management](02-memory-management.md) |
-| Multi-threaded code | [Concurrency & Parallelism](06-concurrency-parallelism.md) |
-| Set up a project | [Tooling & Ecosystem](07-tooling-ecosystem.md) |
-| Write idiomatic D | [Evolution & Best Practices](08-evolution-best-practices.md) |
+```d
+void acquireResource() {
+    acquire();
+    scope(exit)    release();       // always runs
+    scope(failure) rollback();      // runs on exception
+    scope(success) commit();        // runs on normal exit
+    doWork();
+}
+```

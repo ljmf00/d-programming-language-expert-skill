@@ -220,49 +220,6 @@ void typeInfoReturn() {
 }
 ```
 
-### TypeInfo Hierarchy Navigation
-```d
-import std.stdio;
-
-class Base { }
-class Derived : Base { }
-
-void typeHierarchy() {
-    auto derivedTi = typeid(Derived);
-    writeln(derivedTi.toString());  // "Derived"
-    
-    // TypeInfo_Class has .base field for parent
-    auto baseTi = typeid(Base);
-    writeln(baseTi.toString());  // "Base"
-}
-```
-
-### typeid with Templates
-```d
-import std.stdio;
-
-void templateTypes() {
-    auto ti1 = typeid(int[]);
-    writeln(ti1.toString());  // "int[]"
-    
-    auto ti2 = typeid(int[string]);
-    writeln(ti2.toString());  // "int[string]"
-}
-```
-
-### typeid Returns TypeInfo
-```d
-import std.stdio;
-
-void typeInfoReturn() {
-    TypeInfo ti = typeid(double);
-    writeln(ti.toString());  // "double"
-    
-    TypeInfo ti2 = typeid(bool);
-    writeln(ti2.toString());  // "bool"
-}
-```
-
 ## Object Base Class
 
 ### Object is Root of All Classes
@@ -799,21 +756,6 @@ void handleRange() {
     }
     catch (RangeError e) {
         // Handle range error
-    }
-}
-```
-
-### onOutOfMemoryErrorNoGC
-```d
-import core.exception : onOutOfMemoryErrorNoGC, OutOfMemoryError;
-
-// @nogc-safe version for GC-free code
-void handleOOMNoGC() @nogc {
-    try {
-        onOutOfMemoryErrorNoGC();
-    }
-    catch (OutOfMemoryError e) {
-        // Handle in @nogc context
     }
 }
 ```

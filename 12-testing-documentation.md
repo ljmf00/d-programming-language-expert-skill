@@ -37,7 +37,6 @@ Comprehensive guide to D's testing infrastructure, contract programming, DDoc do
 - [DDoc DDOC_ Macros](#ddoc-ddoc_-macros)
 - [Embedded Code Examples](#embedded-code-examples)
 - [Doctest Extraction](#doctest-extraction)
-- [std.ddoc Module](#stdddoc-module)
 - [Testing Best Practices](#testing-best-practices)
 
 ---
@@ -324,6 +323,8 @@ int process(int x) {
 ### Assert with Custom Message
 
 ```d
+import std.conv : to;
+
 // assert with string message for better error reporting
 void validate(int value) {
     assert(value > 0, "Value must be positive, got: " ~ value.to!string);
@@ -403,7 +404,7 @@ int sum(int a, int b) {
  *    Reversed string
  *
  * Example:
- *    dauto result = reverseStr("hello"); // "olleh"
+ *    auto result = reverseStr("hello"); // "olleh"
  */
 string reverseStr(string s) {
     char[] chars = s.dup;
@@ -585,17 +586,6 @@ bool isPalindrome(string s) {
     import std.range : retro;
     return s.equal(retro(s));
 }
-```
-
-## std.ddoc Module
-
-### Programmatic DDoc Generation
-
-```d
-// std.ddoc provides programmatic documentation generation
-// Use ddoc compiler flag to generate HTML documentation
-// ldc2 -d -o- myfile.d generates DDoc output
-// For runtime DDoc access, use std.ddoc module
 ```
 
 ## Testing Best Practices

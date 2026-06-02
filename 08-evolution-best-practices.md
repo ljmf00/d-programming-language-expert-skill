@@ -125,10 +125,12 @@ T maxOf(T)(T a, T b) => a > b ? a : b;
 
 ## DIP 1048: Language Bitfields
 
-Language-level bitfields (DMD 2.108+). Distinct from `std.bitmanip.bitfields`
-which is a library mixin predating this DIP.
+Language-level bitfields. Distinct from `std.bitmanip.bitfields` which is a
+library mixin predating this DIP. Requires DMD 2.108+ or LDC 1.36+; older
+compilers only have the `std.bitmanip` library approach.
 
 ```d
+// → requires DMD 2.108+ / LDC 1.36+; older compilers reject uint x:N; syntax
 struct PacketHeader {
     uint ver:4;    // 4-bit field
     uint type:2;   // 2-bit field
@@ -145,7 +147,11 @@ void main() {
 
 ## DIP 1030: Named Arguments
 
+Default since DMD 2.103 / LDC 1.33. Applies to both function calls and
+struct literal construction.
+
 ```d
+// → requires DMD 2.103+ / LDC 1.33+; older compilers treat `name:` as a label
 void configure(int port, string host, bool ssl) { }
 
 // Named arguments — can reorder, skip optional args

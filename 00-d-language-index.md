@@ -115,12 +115,12 @@ void main() {
 ### RAII Resource Management
 
 ```d
-import std.stdio : File;
+import std.stdio : File, writeln;
 
 void processFile(string path) {
     auto file = File(path, "r");
     foreach (line; file.byLine())
-        processLine(line);
+        writeln(line);
 }  // file closed automatically at scope exit
 ```
 
@@ -138,11 +138,10 @@ void main() {
 ### Scope Guard
 
 ```d
+import core.stdc.stdio : fopen, fclose, FILE;
+
 void acquireResource() {
-    acquire();
-    scope(exit)    release();       // always runs
-    scope(failure) rollback();      // runs on exception
-    scope(success) commit();        // runs on normal exit
-    doWork();
+    FILE* f = fopen("file.txt", "r");
+    scope(exit) fclose(f);   // always runs
 }
 ```

@@ -90,5 +90,5 @@ All code snippets in these subskill files pass compilation with LDC.
 Run the verifier at any time:
 
 ```
-python3 d-lang-expert/verify.py [--verbose] [--fail-fast]
+python3 verify.py [--verbose] [--fail-fast]
 ```

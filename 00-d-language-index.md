@@ -102,9 +102,11 @@ enum MyEnum { none }
 void myFunction() { }
 int myVariable = 0;
 
-// Constants and enums: UPPER_SNAKE_CASE
+// Constants: UPPER_SNAKE_CASE
 const int MAX_SIZE = 100;
-enum Color { RED, GREEN, BLUE }
+
+// Enum members: camelCase
+enum Color { red, green, blue }
 ```
 
 ### Import Style

@@ -4,8 +4,14 @@ description: >-
   D programming language expert. Covers syntax, semantics, standard library
   (Phobos), compiler runtime (druntime), memory model, templates and
   metaprogramming, ranges and algorithms, concurrency and parallelism,
-  tooling ecosystem, and language evolution. Use whenever working with .d
-  or .di files to provide authoritative, pattern-consistent guidance.
+  tooling ecosystem, and language evolution.
+  TRIGGER when: editing .d or .di files; working with dub.sdl or dub.json;
+  code imports Phobos (std.*) or druntime (core.*) modules; questions about
+  DMD/LDC compiler flags, DIPs, or D-specific idioms (ranges, UFCS, mixins,
+  @safe/@nogc, scope guards).
+  SKIP: non-D files that happen to use a .d extension (e.g. Makefile .d
+  dependency files); other-language template engines; generic programming
+  discussions not tied to actual D source.
 license: MIT
 compatibility: opencode claude
 metadata:

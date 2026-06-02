@@ -151,7 +151,7 @@ auto pos = arr.countUntil(3);  // 2
 
 ### Sorting
 ```d
-import std.algorithm : sort, isSorted, isPartitioned;
+import std.algorithm : sort, isSorted, isPartitioned, partition;
 
 int[] arr = [5, 3, 1, 4, 2];
 
@@ -390,7 +390,7 @@ int[] arr = [1, 2, 3, 4, 5];
 
 // Format range
 writefln("%(%d %)", arr);  // "1 2 3 4 5 "
-writefln("%(%d, %)%", arr);  // "1, 2, 3, 4, 5, "
+writefln("%(%d, %)", arr);  // "1, 2, 3, 4, 5, "
 ```
 
 ## std.datetime
@@ -626,10 +626,9 @@ string decoded = decode("hello%20world");  // "hello world"
 ### UUID Generation
 ```d
 import std.uuid : UUID, randomUUID;
-import std.random : rndGen;
 
 // Generate UUID
-auto uuid = randomUUID(rndGen);
+auto uuid = randomUUID();
 writeln(uuid.toString);
 
 // Parse UUID
@@ -690,16 +689,25 @@ if (m.hit) {
 
 ### Tagged Union / Sum Type
 ```d
-import std.sumtype : SumType, tryMatch;
+import std.sumtype : SumType, match, tryMatch;
+import std.stdio : writeln;
 
-// Create a sum type
 alias Value = SumType!(int, double, string);
 
-auto value = Value(42);
+void main() {
+    auto value = Value(42);
 
-// tryMatch with guard
-if (auto matched = value.tryMatch!int) {
-    writeln("Got an int: ", matched);
+    // match — exhaustive, must handle all types
+    value.match!(
+        (int x)    => writeln("int: ", x),
+        (double x) => writeln("double: ", x),
+        (string x) => writeln("string: ", x),
+    );
+
+    // tryMatch — partial match; throws MatchException if no handler fires
+    value.tryMatch!(
+        (int x) => writeln("Got an int: ", x),
+    );
 }
 ```
 
@@ -757,7 +765,6 @@ BitArray bits;
 bits.length = 10;
 bits[0] = true;
 bits[1] = false;
-```
 ```
 
 ## std.complex
@@ -869,7 +876,7 @@ double t = trunc(3.14);         // 3.0
 double m = fmax(a, b);          // Maximum of a and b
 double n = fmin(a, b);          // Minimum
 double ab = fabs(a);            // Absolute value
-bool eq = approxEqual(a, b);    // Approximate equality with tolerance
+bool eq = isClose(a, b);        // Approximate equality (approxEqual is legacy; prefer isClose)
 
 // Constants
 double pi = PI;
@@ -1087,7 +1094,7 @@ format(fmt, args)    // Format string
 
 ### std.datetime
 ```d
-DateTime.now         // Current date/time
+Clock.currTime()     // Current date/time (from std.datetime.systime)
 DateTime(y, m, d)    // Create date/time
 Duration.days(n)     // Duration
 ```

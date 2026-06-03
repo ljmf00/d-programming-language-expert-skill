@@ -228,6 +228,8 @@ version(OSX) {
 
 ```d
 version(OSX) {
+    extern(Objective-C) class ObjcObject {}  // id is ObjC's universal object type
+    alias id = ObjcObject;
     extern(Objective-C) interface ObjCNSCopying {
         id copyWithZone(id zone);
     }
@@ -238,6 +240,8 @@ version(OSX) {
 
 ```d
 version(OSX) {
+    extern(Objective-C) class ObjcObject {}  // id is ObjC's universal object type
+    alias id = ObjcObject;
     extern(Objective-C) class ObjCNSObject {
         ObjCNSObject performSelector(id aSelector);
         id description();

@@ -158,11 +158,13 @@ void main() {
     auto s = "hello";      // string (immutable(char)[])
     auto arr = [1, 2, 3];  // int[3] (static array)
 
-    // ref: reference to another variable
+    // ref local variables — DIP 1046; guarded because not yet default in all compilers
     int a = 10;
-    ref int b = a;         // b is an alias for a
-    b = 20;                // a is now 20
-    writeln(a);            // prints 20
+    static if (__traits(compiles, { int _x = 0; ref int _y = _x; })) {
+        ref int b = a;     // b is an alias for a
+        b = 20;            // a is now 20
+        writeln(a);        // prints 20
+    }
 
     // scope: class instance may be stack-allocated, destructor called at scope exit
     class Resource {}
@@ -1325,11 +1327,13 @@ version (D_InlineAsm_X86) {
     }
 }
 
-// More examples
-void increment(ref int val) {
-    asm {
-        mov EAX, val;
-        add [EAX], 1;
+// DMD asm syntax only; LDC uses GCC-style __asm__ instead
+version(DigitalMars) {
+    void increment(ref int val) {
+        asm {
+            mov EAX, val;
+            add [EAX], 1;
+        }
     }
 }
 ```

@@ -692,11 +692,13 @@ void main() {
 ### Linux sched
 
 ```d
-import core.sys.linux.sched : sched_getcpu;
+version(linux) {
+    import core.sys.linux.sched : sched_getcpu;
 
-void main() {
-    import std.stdio : writeln;
-    writeln("sched_getcpu: ", sched_getcpu());
+    void main() {
+        import std.stdio : writeln;
+        writeln("sched_getcpu: ", sched_getcpu());
+    }
 }
 ```
 

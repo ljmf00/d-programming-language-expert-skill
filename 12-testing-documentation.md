@@ -171,10 +171,8 @@ unittest {
 ```d
 // Pre-condition: validates input before execution
 int divide(int a, int b)
-in {
-    assert(b != 0, "Cannot divide by zero");
-}
-do {
+in (b != 0, "Cannot divide by zero")
+{
     return a / b;
 }
 ```
@@ -184,10 +182,8 @@ do {
 ```d
 // Post-condition: validates output after execution
 int absolute(int value)
-out (result) {
-    assert(result >= 0, "Absolute value must be non-negative");
-}
-do {
+out (result; result >= 0)
+{
     return value < 0 ? -value : value;
 }
 ```
@@ -197,13 +193,9 @@ do {
 ```d
 // Both pre and post conditions
 int factorial(int n)
-in {
-    assert(n >= 0 && n <= 20, "n must be 0..20");
-}
-out (result) {
-    assert(result > 0, "Factorial must be positive");
-}
-do {
+in (n >= 0 && n <= 20, "n must be 0..20")
+out (result; result > 0, "Factorial must be positive")
+{
     int r = 1;
     foreach (i; 1 .. n + 1) r *= i;
     return r;
@@ -219,9 +211,11 @@ do {
 struct Buffer {
     int[] data;
     void append(int v)
-    in { assert(data.length < 100); }
-    out { assert(data[$ - 1] == v); }
-    do { data ~= v; }
+    in (data.length < 100)
+    out (; data[$ - 1] == v)
+    {
+        data ~= v;
+    }
 }
 ```
 
@@ -232,9 +226,7 @@ struct Buffer {
 struct Counter {
     int count;
     void increment() { count++; }
-    invariant() {
-        assert(count >= 0, "Count must be non-negative");
-    }
+    invariant (count >= 0, "Count must be non-negative");
 }
 ```
 
@@ -245,13 +237,9 @@ struct Counter {
 ```d
 // Capture return value in post-condition
 int clamp(int value, int min, int max)
-in {
-    assert(min <= max, "min must not exceed max");
-}
-out (result) {
-    assert(result >= min && result <= max, "Result must be in range");
-}
-do {
+in (min <= max, "min must not exceed max")
+out (result; result >= min && result <= max, "Result must be in range")
+{
     if (value < min) return min;
     if (value > max) return max;
     return value;
@@ -298,9 +286,7 @@ class Account {
     double balance;
     this(double initial) { balance = initial; }
     void deposit(double amount) { balance += amount; }
-    invariant() {
-        assert(balance >= 0, "Balance cannot be negative");
-    }
+    invariant (balance >= 0, "Balance cannot be negative");
 }
 ```
 
@@ -601,14 +587,16 @@ struct SafeArray {
     int[] data;
 
     void push(int value)
-    in { assert(data.length < 1000); }
-    out { assert(data[$ - 1] == value); }
-    do { data ~= value; }
+    in (data.length < 1000)
+    out (; data[$ - 1] == value)
+    {
+        data ~= value;
+    }
 
     int pop()
-    in { assert(data.length > 0, "Cannot pop from empty array"); }
-    out (result) { assert(result >= 0); }
-    do {
+    in (data.length > 0, "Cannot pop from empty array")
+    out (result; result >= 0)
+    {
         auto val = data[$ - 1];
         data.length--;
         return val;
@@ -648,9 +636,7 @@ class Stack {
         return _items.length == 0;
     }
 
-    invariant() {
-        assert(_items.length >= 0);
-    }
+    invariant (_items.length >= 0);
 }
 
 unittest {
@@ -671,9 +657,11 @@ import std.exception : assertThrown;
 import core.exception : AssertError;
 
 int safeDivide(int a, int b)
-in { assert(b != 0); }
-out (result) { assert(result * b == a || (a % b != 0 && result == a / b)); }
-do { return a / b; }
+in (b != 0)
+out (result; result * b == a || (a % b != 0 && result == a / b))
+{
+    return a / b;
+}
 
 void main() {
     assert(safeDivide(10, 2) == 5);
@@ -710,17 +698,20 @@ dmd -D -Df=output.html mymodule.d
 ### Contract Summary
 
 ```d
-// Contract syntax quick reference
+// Contract syntax quick reference (expression-based, DIP 1009)
 // Pre-condition (input validation)
-//   in { assert(...); }
+//   in (condition, "optional message")
 // Post-condition (output validation)
-//   out (result) { assert(...); }
-//   out { assert(...); }  // no result capture
-// Body
-//   do { return value; }
+//   out (result; condition)   // result captures the return value
+//   out (; condition)         // no result capture
+// Body follows directly (no `do` needed with expression contracts)
+//   { return value; }
 // Class/struct invariant
-//   invariant() const { assert(...); }
+//   invariant (condition);
 ```
+
+> The block form (`in { assert(...); } do { ... }`) is still valid; prefer the
+> expression form above when each contract is a single assertion.
 
 ## References
 

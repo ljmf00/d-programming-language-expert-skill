@@ -197,7 +197,26 @@ writeln("Sent int to worker");
 
 ### spawnLinked
 
-`spawnLinked` is not part of the `std.concurrency` public API; use `spawn` and handle `OwnerTerminated` / `LinkTerminated` messages in the child for error propagation patterns.
+`spawnLinked(&fn, args)` is the public `std.concurrency` variant of `spawn` that
+_links_ the spawned thread to the owner: when the child terminates (normally or
+by an uncaught exception), the owner receives a `LinkTerminated` message. Use it
+with `receive` to detect worker failure.
+
+```d
+import std.concurrency : spawnLinked, receive, LinkTerminated, OwnerTerminated;
+import std.stdio : writeln;
+
+static void worker() {
+    // ... do work, then return (or throw) ...
+}
+
+void main() {
+    auto tid = spawnLinked(&worker);
+    receive(
+        (LinkTerminated lt) { writeln("worker ended: ", lt.tid); },
+    );
+}
+```
 
 ## std.parallelism
 
@@ -212,9 +231,11 @@ import std.stdio;
 // Parallel foreach
 auto arr = iota(0, 100).array;
 
-foreach (i; parallel(arr)) {
-    // Process elements in parallel
-    arr[i] = i * i;
+// `parallel(arr)` yields elements; bind `ref` to mutate in place, and add an
+// index variable when you need the position (not `foreach (i; parallel(arr))`,
+// which would bind `i` to the element value, not the index).
+foreach (i, ref elem; parallel(arr)) {
+    elem = cast(int)(i * i);
 }
 
 writeln("Done");
@@ -257,7 +278,7 @@ int[] result = taskPool.amap!((i) => i * i)(arr);
 writeln("Result: ", result);  // [1, 4, 9, 16, 25, ...]
 ```
 
-### areduce
+### taskPool.reduce (parallel reduce)
 
 ```d
 import std.parallelism;
@@ -268,7 +289,7 @@ import std.stdio;
 // Parallel reduce
 auto arr = iota(1, 101).array;
 
-// Sum with parallel execution
+// Sum with parallel execution (reduce is a TaskPool method, not a free function)
 int sum = taskPool.reduce!((a, b) => a + b)(arr);
 writeln("Sum: ", sum);
 ```
@@ -307,14 +328,14 @@ import std.stdio;
 
 int[] arr = new int[1_000_000];
 
-// Parallel foreach (default)
-foreach (i; parallel(arr)) {
-    arr[i] = i * i;
+// Parallel foreach (default) — ref element, index for the position
+foreach (i, ref elem; parallel(arr)) {
+    elem = cast(int)(i * i);
 }
 
-// With work unit size
-foreach (i; parallel(arr, 100)) {
-    arr[i] = arr[i] * 2;
+// With work unit size (second arg to parallel)
+foreach (ref elem; parallel(arr, 100)) {
+    elem = elem * 2;
 }
 ```
 
@@ -818,8 +839,8 @@ thisTid                    // Current thread's ID
 
 ```d
 parallel(range)            // Parallel foreach
-amap!func(range)           // Parallel map
-areduce!op(range, init)    // Parallel reduce
+taskPool.amap!func(range)  // Parallel eager map (TaskPool method)
+taskPool.reduce!op(range)  // Parallel reduce (TaskPool method)
 taskPool                   // Task scheduler
 ```
 
@@ -827,8 +848,8 @@ taskPool                   // Task scheduler
 
 ```d
 parallel(range)            // Parallel foreach
-amap!func(range)           // Parallel map
-areduce!op(range, init)    // Parallel reduce
+taskPool.amap!func(range)  // Parallel eager map (TaskPool method)
+taskPool.reduce!op(range)  // Parallel reduce (TaskPool method)
 taskPool                   // Task scheduler
 task!func(args)            // Create individual task
 asyncBuf(range, size)      // Async buffered range
@@ -869,8 +890,7 @@ prioritySend(tid, msg)     // Priority message
 ownerTid                   // Parent thread ID
 thisTid                    // Current thread ID
 spawn(&func)               // Spawn thread
-spawnLinked(&func)         // Spawn with error propagation
-spawnSingleton!("name", &func)  // Singleton thread
+spawnLinked(&func)         // Spawn linked: owner gets LinkTerminated on exit
 ```
 
 ### Data Sharing

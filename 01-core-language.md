@@ -1604,11 +1604,14 @@ struct MyStruct {
 
 ```d
 // Traditional assert
+int x = 5;
 assert(x > 0);
 assert(x > 0, "x must be positive");
 
 // Expression-based contracts (DIP 1009)
-int divide(int a, int b) in (a > 0) out (result => result >= 0) {
+// The out result variable is introduced with `out (name; condition)` — note the
+// semicolon. `out (name => condition)` is a syntax error.
+int divide(int a, int b) in (b != 0) out (result; a % b != 0 || result * b == a) {
     return a / b;
 }
 ```

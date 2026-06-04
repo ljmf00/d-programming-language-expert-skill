@@ -702,23 +702,19 @@ void testMove() {
 import core.lifetime : move;
 import std.stdio;
 
+// Move-only struct: copying disabled. `move` does the destructive transfer
+// itself (blit + reset source to .init) — no custom move constructor needed.
 struct Resource {
     int[] data;
 
-    // Move constructor
-    this(ref Resource other) {
-        this.data = other.data;
-        other.data = null;
-    }
-
-    // Disable copy
-    @disable this(this);
+    @disable this(this);  // no copying
 }
 
 void testMoveStruct() {
     auto src = Resource([1, 2, 3]);
     auto dst = move(src);
     writeln(dst.data.length);  // 3
+    writeln(src.data is null); // true — src was reset
 }
 ```
 
@@ -731,18 +727,14 @@ import core.memory : GC;
 struct Movable {
     int value;
 
-    this(ref Movable other) {
-        value = other.value;
-        other.value = 0;
-    }
-
-    @disable this(this);
+    @disable this(this);  // move-only
 }
 
 void testMoveEmplace() {
     auto src = Movable(42);
     auto buf = cast(Movable*)GC.malloc(Movable.sizeof);
-    moveEmplace!Movable(src, *buf);
+    // moveEmplace move-constructs into uninitialised storage (no destroy first).
+    moveEmplace(src, *buf);
     writeln(buf.value);  // 42
 }
 ```

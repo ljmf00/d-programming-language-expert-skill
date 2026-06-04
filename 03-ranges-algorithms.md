@@ -16,6 +16,7 @@ metadata:
 Comprehensive guide to D's range-based programming model and the powerful std.algorithm library.
 
 ## Table of Contents
+
 - [Range Basics](#range-basics)
 - [Range Types](#range-types)
 - [Range Primitives](#range-primitives)
@@ -28,23 +29,25 @@ Comprehensive guide to D's range-based programming model and the powerful std.al
 ## Range Basics
 
 ### What is a Range?
+
 A range is any type that provides a common interface to a sequence of values. Ranges generalize arrays, lists, and other sequential access patterns.
 
 ### Basic Input Range
+
 ```d
 struct MyRange {
     int* ptr;
     size_t length;
     size_t index;
-    
+
     @property bool empty() const {
         return index >= length;
     }
-    
+
     @property ref int front() {
         return ptr[index];
     }
-    
+
     void popFront() {
         index++;
     }
@@ -52,13 +55,14 @@ struct MyRange {
 ```
 
 ### Using Ranges
+
 ```d
 import std.stdio;
 import std.array;
 
 void main() {
     int[] arr = [1, 2, 3, 4, 5];
-    
+
     // Arrays are ranges
     while (!arr.empty) {
         writeln(arr.front);
@@ -68,6 +72,7 @@ void main() {
 ```
 
 ### foreach and Ranges
+
 ```d
 int[] arr = [1, 2, 3, 4, 5];
 
@@ -85,6 +90,7 @@ for (; !arr.empty; arr.popFront()) {
 ## Range Types
 
 ### Range Hierarchy
+
 ```
 Input Range
   ↓
@@ -98,13 +104,14 @@ Slicing Range
 ```
 
 ### Input Range
+
 ```d
 // Most basic range: front, popFront, empty
 struct InputRange {
     int* ptr;
     size_t index;
     size_t length;
-    
+
     @property bool empty() const { return index >= length; }
     @property ref int front() { return ptr[index]; }
     void popFront() { index++; }
@@ -114,17 +121,18 @@ struct InputRange {
 ```
 
 ### Forward Range
+
 ```d
 // Input range + save()
 struct ForwardRange {
     int* ptr;
     size_t index;
     size_t length;
-    
+
     @property bool empty() const { return index >= length; }
     @property ref int front() { return ptr[index]; }
     void popFront() { index++; }
-    
+
     typeof(this) save() {
         return this;  // Returns a copy
     }
@@ -134,46 +142,49 @@ struct ForwardRange {
 ```
 
 ### Bidirectional Range
+
 ```d
 // Forward range + back, popBack
 struct BidirectionalRange {
     int[] data;
     size_t frontIndex;
     size_t backIndex;
-    
+
     @property bool empty() const { return frontIndex >= backIndex; }
     @property ref int front() { return data[frontIndex]; }
     void popFront() { frontIndex++; }
     @property ref int back() { return data[backIndex - 1]; }
     void popBack() { backIndex--; }
-    
+
     typeof(this) save() { return this; }
 }
 ```
 
 ### Random Access Range
+
 ```d
 // Bidirectional range + opIndex
 struct RandomAccessRange {
     int[] data;
-    
+
     @property bool empty() const { return data.length == 0; }
     @property ref int front() { return data[0]; }
     void popFront() { data = data[1 .. $]; }
     @property ref int back() { return data[$-1]; }
     void popBack() { data = data[0 .. $-1]; }
     @property size_t length() const { return data.length; }
-    
+
     ref int opIndex(size_t i) { return data[i]; }
     void opIndexAssign(int v, size_t i) { data[i] = v; }
-    
+
     typeof(this) save() { return this; }
 }
 ```
 
 ### Range Traits
+
 ```d
-import std.range.primitives : isInputRange, isForwardRange, 
+import std.range.primitives : isInputRange, isForwardRange,
                               isBidirectionalRange, isRandomAccessRange,
                               isOutputRange, hasLength;
 
@@ -189,13 +200,14 @@ static assert(isInputRange!(int[]) && isForwardRange!(int[]) && hasLength!(int[]
 ## Output Ranges
 
 ### Output Range Interface
+
 ```d
 // An output range must support: put(range, value)
 import std.range.primitives : put;
 
 struct MyOutputRange {
     int[] store;
-    
+
     void put(int value) {
         store ~= value;
     }
@@ -208,6 +220,7 @@ void main() {
 ```
 
 ### Using Output Ranges
+
 ```d
 import std.stdio;
 import std.range;
@@ -238,6 +251,7 @@ while (!someInputRange.empty) {
 ## Range Primitives
 
 ### Essential Primitives
+
 ```d
 import std.range.primitives;
 
@@ -258,6 +272,7 @@ ElementEncodingType!R   // The character encoding type
 ```
 
 ### Range Operations
+
 ```d
 import std.range;
 
@@ -276,6 +291,7 @@ void main() {
 ```
 
 ### Moving Elements
+
 ```d
 import std.range.primitives : moveFront, moveBack, moveAt;
 
@@ -290,6 +306,7 @@ void main() {
 ```
 
 ## Range Composition
+
 ```d
 import std.range : chain;
 
@@ -300,6 +317,7 @@ auto combined = chain(a, b);  // [1, 2, 3, 4, 5, 6]
 ```
 
 ### zip: Pair Elements
+
 ```d
 import std.range : zip;
 
@@ -312,6 +330,7 @@ foreach (x, y; zip(a, b)) {
 ```
 
 ### enumerate: Index with Range
+
 ```d
 import std.stdio;
 import std.range : enumerate;
@@ -326,6 +345,7 @@ void main() {
 ```
 
 ### take: Take First N Elements
+
 ```d
 import std.range : take;
 
@@ -335,6 +355,7 @@ auto first3 = take(arr, 3);  // [1, 2, 3]
 ```
 
 ### drop: Skip First N Elements
+
 ```d
 import std.range : drop;
 
@@ -344,6 +365,7 @@ auto rest = drop(arr, 2);  // [3, 4, 5]
 ```
 
 ### cycle: Repeat Infinitely
+
 ```d
 import std.range : cycle;
 
@@ -353,6 +375,7 @@ auto cycled = cycle(arr);  // 1, 2, 3, 1, 2, 3, ...
 ```
 
 ### repeat: Repeat Element
+
 ```d
 import std.range : repeat;
 
@@ -361,6 +384,7 @@ auto infiniteOnes = repeat(1);  // 1, 1, 1, ...
 ```
 
 ### iota: Number Sequence
+
 ```d
 import std.range : iota;
 
@@ -370,6 +394,7 @@ iota(0, 10, 2); // 0, 2, 4, 6, 8
 ```
 
 ### retro: Reverse Iteration
+
 ```d
 import std.stdio;
 import std.range : retro;
@@ -384,6 +409,7 @@ void main() {
 ```
 
 ### stride: Skip Elements
+
 ```d
 import std.range : stride;
 
@@ -395,6 +421,7 @@ foreach (elem; arr.stride(3)) {
 ```
 
 ### slide: Sliding Window
+
 ```d
 import std.range : slide;
 
@@ -406,6 +433,7 @@ foreach (window; arr.slide(3)) {
 ```
 
 ### chunks: Split into Chunks
+
 ```d
 import std.range : chunks;
 
@@ -419,6 +447,7 @@ foreach (chunk; arr.chunks(3)) {
 ## std.algorithm
 
 ### filter: Select Elements
+
 ```d
 import std.algorithm : filter;
 
@@ -428,6 +457,7 @@ auto evens = arr.filter!(a => a % 2 == 0);  // [2, 4, 6]
 ```
 
 ### map: Transform Elements
+
 ```d
 import std.algorithm : map;
 
@@ -437,6 +467,7 @@ auto squared = arr.map!(a => a * a);  // [1, 4, 9, 16, 25]
 ```
 
 ### reduce: Accumulate Values
+
 ```d
 import std.algorithm : reduce;
 
@@ -447,6 +478,7 @@ auto product = arr.reduce!((a, b) => a * b);  // 120
 ```
 
 ### sort: Sort Range
+
 ```d
 import std.algorithm : sort;
 
@@ -458,6 +490,7 @@ arr.sort!((a, b) => a > b);  // [5, 4, 3, 2, 1]
 ```
 
 ### find: Search for Element
+
 ```d
 import std.algorithm : find;
 
@@ -470,6 +503,7 @@ if (!result.empty) {
 ```
 
 ### canFind: Check Existence
+
 ```d
 import std.algorithm : canFind;
 
@@ -481,6 +515,7 @@ if (arr.canFind(3)) {
 ```
 
 ### count: Count Elements
+
 ```d
 import std.algorithm : count;
 
@@ -490,6 +525,7 @@ auto c = arr.count!(a => a > 2);  // 3
 ```
 
 ### each: Apply Function to Each
+
 ```d
 import std.algorithm : each;
 
@@ -499,6 +535,7 @@ arr.each!writeln;  // Print each element
 ```
 
 ### reverse: Reverse in Place
+
 ```d
 import std.algorithm : reverse;
 
@@ -507,6 +544,7 @@ arr.reverse();  // [5, 4, 3, 2, 1]
 ```
 
 ### uniq: Remove Consecutive Duplicates
+
 ```d
 import std.algorithm : uniq;
 
@@ -515,6 +553,7 @@ auto unique = arr.uniq;  // [1, 2, 3]
 ```
 
 ### group: Group Consecutive Elements
+
 ```d
 import std.algorithm : group;
 
@@ -526,6 +565,7 @@ foreach (count, value; arr.group) {
 ```
 
 ### chunkBy: Group by Property
+
 ```d
 import std.algorithm : chunkBy;
 
@@ -537,6 +577,7 @@ foreach (chunk; arr.chunkBy!((a, b) => (a % 2) == (b % 2))) {
 ```
 
 ### splitWhen: Split on Condition
+
 ```d
 import std.stdio;
 import std.algorithm : splitWhen;
@@ -549,6 +590,7 @@ foreach (chunk; arr.splitWhen!((a, b) => b == 0)) {
 ```
 
 ### joiner: Flatten Nested Ranges
+
 ```d
 import std.algorithm : joiner;
 
@@ -558,6 +600,7 @@ auto flat = arr.joiner;  // [1, 2, 3, 4, 5, 6]
 ```
 
 ### substitute: Replace Elements
+
 ```d
 import std.algorithm : substitute;
 
@@ -567,6 +610,7 @@ auto result = arr.substitute(3, 99);  // [1, 2, 99, 4, 5]
 ```
 
 ### tee: Side Effects in Pipeline (use each)
+
 ```d
 import std.array;
 import std.algorithm.iteration : each, map;
@@ -578,6 +622,7 @@ result.each!(a => writeln(a));
 ```
 
 ### Mutation Operations
+
 ```d
 import std.stdio;
 import std.algorithm.mutation;
@@ -604,6 +649,7 @@ void main() {
 ```
 
 ### Sorting
+
 ```d
 import std.algorithm.sorting;
 
@@ -633,6 +679,7 @@ auto sorted = multiSort!((a, b) => a.name < b.name,
 ```
 
 ### Set Operations
+
 ```d
 import std.algorithm.setops;
 
@@ -648,6 +695,7 @@ auto product = cartesianProduct(a, b);  // [(1,4), (1,5), ...]
 ```
 
 ### Comparison
+
 ```d
 import std.algorithm.comparison;
 
@@ -667,6 +715,7 @@ void main() {
 ```
 
 ### Additional std.range Adaptors
+
 ```d
 import std.range : assumeSorted, generate, lockstep, only, recurrence,
                    takeNone, takeOne, takeExactly, transposed;
@@ -710,6 +759,7 @@ auto logged = arr.tee!(x => writeln("Processing: ", x));
 ## Common Patterns
 
 ### Range Pipeline
+
 ```d
 import std.algorithm : filter, map, reduce;
 import std.algorithm.sorting : sort;
@@ -724,12 +774,13 @@ void main() {
         .array
         .sort
         .reduce!((a, b) => a + b);
-    
+
     writeln(result);
 }
 ```
 
 ### Lazy Evaluation
+
 ```d
 // Ranges are lazy - no computation until consumed
 import std.algorithm : map, filter;
@@ -747,6 +798,7 @@ foreach (elem; range.take(5)) {
 ```
 
 ### Collecting Results
+
 ```d
 import std.algorithm : map;
 import std.array : array;
@@ -757,6 +809,7 @@ auto result = arr.map!(a => a * 2).array;  // [2, 4, 6, 8, 10]
 ```
 
 ### Converting to Array
+
 ```d
 import std.range : iota;
 import std.array : array;
@@ -765,6 +818,7 @@ auto arr = iota(1, 11).array;  // [1, 2, ..., 10]
 ```
 
 ### Chaining with save()
+
 ```d
 import std.algorithm : map, filter;
 import std.range : iota;
@@ -779,6 +833,7 @@ auto odd = range.save.filter!(a => a % 2 != 0);
 ## Performance Considerations
 
 ### Lazy vs Eager
+
 ```d
 auto range = [1, 2, 3, 4, 5];
 auto pred = (int a) => a > 2;
@@ -792,6 +847,7 @@ auto eagerArray = range.filter!pred.map!transform.array;
 ```
 
 ### Avoiding Allocations
+
 ```d
 auto arr = [3, 1, 4, 1, 5, 9, 2];
 auto pred = (int a) => a > 2;
@@ -810,6 +866,7 @@ arr.filter!pred.map!transform.each!process;
 ```
 
 ### Known Length
+
 ```d
 // Ranges with known length are more efficient
 auto range = [1, 2, 3];
@@ -817,6 +874,7 @@ auto len = range.length;  // Ranges with .length use O(1) ops
 ```
 
 ### Random Access Efficiency
+
 ```d
 // Random access ranges support efficient indexing
 import std.range : take;
@@ -828,6 +886,7 @@ auto first3 = range.take(3);  // Efficient on random-access ranges
 ## Quick Reference
 
 ### Range Primitives
+
 ```d
 // @property bool empty() const
 // @property ref T front()
@@ -841,6 +900,7 @@ auto first3 = range.take(3);  // Efficient on random-access ranges
 ```
 
 ### Range Composition
+
 ```d
 chain(r1, r2, ...)      // Concatenate
 zip(r1, r2, ...)        // Pair elements
@@ -857,6 +917,7 @@ chunks(range, size)      // Split into chunks
 ```
 
 ### std.algorithm (Quick Reference)
+
 ```d
 filter!(pred)            // Select elements
 map!(transform)          // Transform elements
@@ -877,6 +938,7 @@ tee!(action)             // Side effects in pipeline
 ```
 
 ### Range Traits
+
 ```d
 isInputRange!(Range)
 isForwardRange!(Range)
@@ -890,6 +952,7 @@ hasMobileElements!(Range)
 ```
 
 ### Additional std.algorithm
+
 ```d
 bringToFront   // Rotate elements
 moveAll         // Move elements between ranges
@@ -930,6 +993,7 @@ tee            // Side-effect passthrough
 ## Common Idioms
 
 ### Filtering and Transforming
+
 ```d
 import std.algorithm : filter, map;
 
@@ -940,6 +1004,7 @@ auto result = data
 ```
 
 ### Reducing to Single Value
+
 ```d
 import std.algorithm : reduce;
 
@@ -949,6 +1014,7 @@ auto max = data.reduce!((a, b) => (a > b) ? a : b);
 ```
 
 ### Searching
+
 ```d
 import std.algorithm : find, canFind;
 
@@ -961,6 +1027,7 @@ if (data.canFind(target)) {
 ```
 
 ### Grouping
+
 ```d
 import std.algorithm : group, chunkBy;
 
@@ -974,6 +1041,7 @@ foreach (chunk; data.chunkBy!((a, b) => a % 2 == b % 2)) { }
 ```
 
 ## References
+
 - [Phobos std.range](https://dlang.org/phobos/std_range.html)
 - [Phobos std.algorithm](https://dlang.org/phobos/std_algorithm.html)
 - [Range Primitives](https://dlang.org/phobos/std_range_primitives.html)

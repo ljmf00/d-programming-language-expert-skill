@@ -16,6 +16,7 @@ metadata:
 Comprehensive guide to D's memory management: garbage collection, RAII, memory safety attributes, and the const/immutable system.
 
 ## Table of Contents
+
 - [Garbage Collection](#garbage-collection)
 - [RAII and Scope Statements](#raii-and-scope-statements)
 - [Memory Safety Model](#memory-safety-model)
@@ -36,6 +37,7 @@ Comprehensive guide to D's memory management: garbage collection, RAII, memory s
 ## Garbage Collection
 
 ### Automatic Memory Management
+
 ```d
 // Objects on the garbage-collected heap
 class MyClass {
@@ -50,6 +52,7 @@ void main() {
 ```
 
 ### GC Control
+
 ```d
 import core.memory : GC;
 
@@ -58,6 +61,7 @@ GC.collect();
 ```
 
 ### GC-Free Code
+
 ```d
 // @nogc functions cannot allocate on GC heap
 void noGCFunction() @nogc {
@@ -66,7 +70,7 @@ void noGCFunction() @nogc {
     // - dynamic arrays (unless reusing existing capacity)
     // - string concatenation
     // - most Phobos functions
-    
+
     // Can use:
     // - stack allocation
     // - static arrays
@@ -76,6 +80,7 @@ void noGCFunction() @nogc {
 ```
 
 ### When GC Runs
+
 - When heap is full
 - Explicitly via `GC.collect()`
 - At program exit
@@ -84,6 +89,7 @@ void noGCFunction() @nogc {
 ## RAII and Scope Statements
 
 ### RAII (Resource Acquisition Is Initialization)
+
 ```d
 import std.stdio : File;
 
@@ -96,20 +102,21 @@ void processFile() {
 ```
 
 ### scope Statement
+
 ```d
 // scope(exit): execute on scope exit
 void example() {
     scope(exit) writeln("Exiting example");
-    
+
     // ... code ...
-    
+
     return;  // "Exiting example" printed
 }
 
 // scope(failure): execute only on exception
 void riskyOperation() {
     scope(failure) writeln("Rolling back");
-    
+
     // ... potentially throwing code ...
 }
 
@@ -117,12 +124,13 @@ void riskyOperation() {
 void transaction() {
     scope(success) writeln("Committed");
     scope(failure) writeln("Rolling back");
-    
+
     // ... code ...
 }
 ```
 
 ### scope (Lifetime Annotation)
+
 ```d
 // scope: prevents pointer values from escaping this scope
 struct Handle {
@@ -136,6 +144,7 @@ void func() {
 ```
 
 ### RAII Patterns
+
 ```d
 import std.stdio;
 
@@ -159,13 +168,13 @@ void criticalSection(Mutex mutex) {
 // Custom RAII wrapper
 struct TempFile {
     string path;
-    
+
     this(string content) {
         import std.file : write;
         path = "tempfile.txt";
         write(path, content);
     }
-    
+
     ~this() {
         import std.file : remove;
         try { remove(path); } catch (Exception) { }
@@ -176,6 +185,7 @@ struct TempFile {
 ## Memory Safety Model
 
 ### @safe: Memory-Safe Code
+
 ```d
 // @safe: no pointer arithmetic, no casts, no unsafe operations
 int safeFunction() @safe {
@@ -187,6 +197,7 @@ int safeFunction() @safe {
 ```
 
 ### @system: Unsafe Code
+
 ```d
 // @system: allows all operations
 int systemFunction() @system {
@@ -198,6 +209,7 @@ int systemFunction() @system {
 ```
 
 ### @trusted: Manually Verified Safe
+
 ```d
 // @trusted: compiler trusts this is safe
 int trustedFunction() @trusted {
@@ -210,6 +222,7 @@ int trustedFunction() @trusted {
 ```
 
 ### Safety Hierarchy
+
 ```
 @safe (most restrictive)
   -> calls
@@ -219,6 +232,7 @@ int trustedFunction() @trusted {
 ```
 
 ### Safety Rules
+
 ```d
 // @safe allows:
 int safeCode() @safe {
@@ -240,6 +254,7 @@ int safeCode() @safe {
 ```
 
 ### Building Safe Code
+
 ```d
 // Start with @safe
 int safeFunc() @safe {
@@ -264,6 +279,7 @@ int caller() @system {
 ## const and immutable
 
 ### const: Read-Only View
+
 ```d
 // const: read-only, but underlying data may be mutable
 const int x = 42;
@@ -278,6 +294,7 @@ const int[][] arr;  // 2D array where all elements are const
 ```
 
 ### immutable: Truly Read-Only
+
 ```d
 // immutable: truly read-only, thread-safe, shareable
 immutable int x = 42;
@@ -290,6 +307,7 @@ immutable int[] sharedData = [1, 2, 3];
 ```
 
 ### const vs immutable
+
 ```d
 // const: mutable underlying data, read-only view
 void processConst(const(int[]) arr) {
@@ -306,6 +324,7 @@ void processImmutable(immutable(int[]) arr) {
 ```
 
 ### const in Functions
+
 ```d
 // const parameter: function promises not to modify
 void process(const int[] arr) {
@@ -324,18 +343,19 @@ const(int)[] getConstSlice(const(int[]) arr) {
 ```
 
 ### const and Classes
+
 ```d
 class MyClass {
     int value;
-    
+
     this(int v) {
         value = v;
     }
-    
+
     void modify() {
         value = 42;
     }
-    
+
     void show() const {
         // Cannot call non-const methods
         // show();  // Error
@@ -352,6 +372,7 @@ void main() {
 ```
 
 ### immutable for Concurrency
+
 ```d
 // Immutable data is thread-safe by definition
 immutable int[] data = [1, 2, 3, 4, 5];
@@ -368,6 +389,7 @@ void threadFunction(immutable int[] data) {
 ## shared Keyword
 
 ### shared Data
+
 ```d
 // shared: data shared between threads
 shared int counter = 0;
@@ -385,10 +407,11 @@ void increment(shared int* counter, Mutex mutex) {
 ```
 
 ### shared Classes
+
 ```d
 shared class SharedData {
     int value;
-    
+
     this(int v) {
         value = v;
     }
@@ -400,6 +423,7 @@ void main() {
 ```
 
 ### shared and const/immutable
+
 ```d
 // shared const: shared, read-only
 shared const int x = 42;
@@ -414,6 +438,7 @@ immutable int z = 42;  // Also shared
 ## Manual Memory Management
 
 ### malloc/free
+
 ```d
 import core.stdc.stdlib : malloc, free;
 
@@ -421,27 +446,28 @@ void manualAllocation() {
     enum size = 1024;
     auto ptr = malloc(size);
     scope(exit) free(ptr);
-    
+
     // Use ptr...
 }
 ```
 
 ### new/delete with Custom Allocator
+
 ```d
 class MyClass {
     int data;
-    
+
     this(int d) {
         data = d;
     }
-    
+
     // Override new/delete for custom allocation
-    static void* opNew(size_t size, in char[] file = __FILE__, 
+    static void* opNew(size_t size, in char[] file = __FILE__,
                        uint line = __LINE__) {
         import core.stdc.stdlib : malloc;
         return malloc(size);
     }
-    
+
     static void opDelete(void* p) {
         import core.stdc.stdlib : free;
         free(p);
@@ -450,6 +476,7 @@ class MyClass {
 ```
 
 ### Stack Allocation
+
 ```d
 // Stack allocation for structs
 struct Point {
@@ -468,13 +495,13 @@ void stackAllocation() {
 ```d
 struct Data {
     int[] buffer;
-    
+
     // Copy constructor (DIP 1018)
     this(ref return scope const typeof(this) other) {
         this.buffer = new int[other.buffer.length];
         this.buffer[] = other.buffer[];
     }
-    
+
     // Move constructor
     this(ref typeof(this) other) {
         // Efficiently transfer ownership
@@ -509,16 +536,16 @@ struct NewStyle {
 ```d
 struct Movable {
     int[] data;
-    
+
     // Move constructor: transfers ownership
     this(ref typeof(this) other) {
         this.data = other.data;
         other.data = null;  // Source is emptied
     }
-    
+
     // Prevent copying
     @disable this(this);  // Disable postblit
-    
+
     // Disable copy construction (if using DIP 1018)
     @disable this(ref return scope const typeof(this));
 }
@@ -533,6 +560,7 @@ void main() {
 ## core.memory (GC API) Detailed
 
 ### GC Control Functions
+
 ```d
 import core.memory : GC;
 
@@ -545,6 +573,7 @@ void gcExample() {
 ```
 
 ### Allocation Attributes
+
 ```d
 import core.memory : GC;
 
@@ -559,27 +588,28 @@ GC.BlkAttr.APPENDABLE          // Allows appending
 ## Reference Counting
 
 ### Manual Reference Counting
+
 ```d
 class RefCounted(T) {
     private T* ptr;
     private int* refCount;
-    
+
     this(T value) {
         ptr = new T(value);
         refCount = new int(1);
     }
-    
+
     this(this) {  // Increment on copy
         if (refCount) (*refCount)++;
     }
-    
+
     ~this() {  // Decrement on destroy
         if (refCount && --(*refCount) == 0) {
             delete ptr;
             delete refCount;
         }
     }
-    
+
     T opUnary(string op)() if (op == "*") {
         return *ptr;
     }
@@ -587,6 +617,7 @@ class RefCounted(T) {
 ```
 
 ### Using std.typecons.RefCounted
+
 ```d
 import std.typecons : RefCounted;
 
@@ -628,7 +659,7 @@ import std.experimental.allocator.mallocator : Mallocator;
 // Simple malloc allocator
 void example() {
     auto alloc = Mallocator.instance;
-    
+
     // Allocate and construct
     auto obj = alloc.make!int(42);
     scope(exit) alloc.dispose(obj);
@@ -636,6 +667,7 @@ void example() {
 ```
 
 ### Allocator Building Blocks
+
 ```d
 // Allocator building blocks are available in std.experimental.allocator
 // APIs may vary between D compiler versions.
@@ -645,11 +677,12 @@ void example() {
 ## Custom Allocators
 
 ### Custom Allocator Class
+
 ```d
 class PoolAllocator {
     private byte[1024 * 1024] pool;  // 1 MB pool
     private size_t offset = 0;
-    
+
     void* allocate(size_t size) {
         if (offset + size > pool.length) {
             throw new Exception("Pool exhausted");
@@ -658,11 +691,11 @@ class PoolAllocator {
         offset += size;
         return ptr;
     }
-    
+
     void deallocate(void* ptr) {
         // Pool allocator doesn't deallocate individually
     }
-    
+
     void reset() {
         offset = 0;
     }
@@ -670,6 +703,7 @@ class PoolAllocator {
 ```
 
 ### Using Custom Allocator
+
 ```d
 // Custom allocator APIs are available in std.experimental.allocator.
 // The API surface is version-dependent; see Phobos documentation.
@@ -678,6 +712,7 @@ class PoolAllocator {
 ## Quick Reference
 
 ### GC Control
+
 ```d
 import core.memory : GC;
 
@@ -689,6 +724,7 @@ void gcExample() {
 ```
 
 ### scope Statements
+
 ```d
 import std.stdio;
 
@@ -700,6 +736,7 @@ void example() {
 ```
 
 ### Memory Safety
+
 ```d
 // @safe      Memory-safe code
 // @system    Unsafe code allowed
@@ -708,6 +745,7 @@ void example() {
 ```
 
 ### const/immutable
+
 ```d
 // const int x;        Read-only view (requires initialization)
 // immutable int y;     Truly read-only (thread-safe)
@@ -716,6 +754,7 @@ void example() {
 ```
 
 ### RAII Patterns
+
 ```d
 import std.stdio;
 
@@ -734,6 +773,7 @@ void main() {
 ```
 
 ### GC API Functions
+
 ```d
 import core.memory : GC;
 
@@ -747,6 +787,7 @@ void gcApiExample() {
 ```
 
 ### Lifecycle Functions
+
 ```d
 // this(T args)             Constructor
 // this(this)               Postblit (copy)
@@ -758,6 +799,7 @@ void gcApiExample() {
 ## Common Idioms
 
 ### Safe Resource Management
+
 ```d
 import std.stdio;
 
@@ -767,12 +809,13 @@ void releaseResource(File f) { f.close(); }
 void processResource() {
     auto resource = acquireResource();
     scope(exit) releaseResource(resource);
-    
+
     resource.writeln("Hello");
 }
 ```
 
 ### Immutable Data Sharing
+
 ```d
 // Create immutable data
 immutable int[] data = [1, 2, 3, 4, 5];
@@ -784,14 +827,15 @@ void threadFunc(immutable int[] data) {
 ```
 
 ### GC-Free Code
+
 ```d
 void noGCFunction() @nogc {
     // Use stack allocation
     int[100] buffer;
-    
+
     // Use pointers
     int* ptr = &buffer[0];
-    
+
     // Avoid:
     // - new
     // - dynamic arrays
@@ -800,6 +844,7 @@ void noGCFunction() @nogc {
 ```
 
 ### Copy vs Move
+
 ```d
 import std.algorithm.mutation : move;
 
@@ -811,6 +856,7 @@ void main() {
 ```
 
 ## References
+
 - [SafeD Article](https://dlang.org/articles/safed.html)
 - [const FAQ](https://dlang.org/articles/const-faq.html)
 - [Memory Safety Specification](https://dlang.org/spec/memory-safe-d.html)

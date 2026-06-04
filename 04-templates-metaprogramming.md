@@ -17,6 +17,7 @@ metadata:
 Comprehensive guide to D's template system, compile-time features, and metaprogramming capabilities.
 
 ## Table of Contents
+
 - [Template Basics](#template-basics)
 - [Template Parameters](#template-parameters)
 - [Template Constraints](#template-constraints)
@@ -34,6 +35,7 @@ Comprehensive guide to D's template system, compile-time features, and metaprogr
 ## Template Basics
 
 ### Function Templates
+
 ```d
 // Basic template function
 auto max(T)(T a, T b) {
@@ -46,20 +48,21 @@ auto result2 = max(3.14, 2.71); // double
 ```
 
 ### Class Templates
+
 ```d
 class Stack(T) {
     private T[] data;
-    
+
     void push(T value) {
         data ~= value;
     }
-    
+
     T pop() {
         auto v = data[$ - 1];
         data = data[0 .. $ - 1];
         return v;
     }
-    
+
     @property bool empty() const {
         return data.length == 0;
     }
@@ -71,11 +74,12 @@ intStack.push(42);
 ```
 
 ### Struct Templates
+
 ```d
 struct Pair(T, U) {
     T first;
     U second;
-    
+
     this(T first, U second) {
         this.first = first;
         this.second = second;
@@ -87,6 +91,7 @@ auto pair = Pair!(int, string)(42, "hello");
 ```
 
 ### Template Specialization
+
 ```d
 // Primary template with specialization via static if
 auto isEven(T)(T value) {
@@ -102,6 +107,7 @@ auto isEven(T)(T value) {
 ## Template Parameters
 
 ### Type Parameters
+
 ```d
 // Single type parameter
 auto identity(T)(T value) {
@@ -115,6 +121,7 @@ auto tuple(T, U)(T first, U second) {
 ```
 
 ### Non-Type Parameters
+
 ```d
 // Integer constant parameter
 struct Array(T, size_t N) {
@@ -126,6 +133,7 @@ Array!(int, 10) arr;  // int[10]
 ```
 
 ### Template Parameters (alias)
+
 ```d
 // Alias parameter (for functions, types, templates)
 bool greater(int a, int b) { return a > b; }
@@ -139,6 +147,7 @@ auto result = sorted!greater([3, 1, 2]);
 ```
 
 ### Template Template Parameters
+
 ```d
 // Template taking a template as parameter via alias
 struct MyVec(T) { T[] data; }
@@ -152,6 +161,7 @@ alias MyVecOfInt = Wrap!(MyVec, int);
 ```
 
 ### Default Template Parameters
+
 ```d
 // Default type parameter
 class Container(T = int) {
@@ -166,6 +176,7 @@ auto c2 = new Container!(double); // Container!(double)
 ## Template Constraints
 
 ### if Constraints
+
 ```d
 // Constraint on template parameter
 auto doubleValue(T)(T value) if (isNumeric!T) {
@@ -179,6 +190,7 @@ auto process(T)(T value) if (isIntegral!T && T.sizeof <= 4) {
 ```
 
 ### is Expressions
+
 ```d
 import std.traits : isCallable;
 import std.range : isInputRange;
@@ -199,6 +211,7 @@ void example(T)() {
 ```
 
 ### Template Predicates
+
 ```d
 import std.traits : isIntegral, isFloatingPoint, isNumeric,
                     isPointer, isArray;
@@ -215,6 +228,7 @@ void example(T)() {
 ```
 
 ### Constraint Examples
+
 ```d
 // Only for types with opCmp
 auto sort(T)(T[] arr) if (is(typeof(T.init.opCmp(T.init)))) {
@@ -237,6 +251,7 @@ auto processRange(R)(R range) if (isInputRange!R) {
 ## Variadic Templates
 
 ### Variadic Function Templates
+
 ```d
 // Variadic template function
 auto sum(T...)(T args) {
@@ -252,6 +267,7 @@ auto result = sum(1, 2, 3, 4, 5);  // 15
 ```
 
 ### Variadic Class Templates
+
 ```d
 // Variadic template struct
 struct Tuple(T...) {
@@ -263,6 +279,7 @@ auto t = Tuple!(int, string, double)(42, "hello", 3.14);
 ```
 
 ### Template Tuples
+
 ```d
 // Template tuple parameter
 auto process(T...)(T args) {
@@ -336,6 +353,7 @@ call!writeln("hello");  // alias = writeln, T = string
 ```
 
 ### AliasSeq
+
 ```d
 import std.meta : AliasSeq;
 
@@ -351,6 +369,7 @@ alias IntAndDouble = Types[0 .. 2];
 ```
 
 ### aliasSeqOf
+
 ```d
 import std.meta : AliasSeq, aliasSeqOf;
 
@@ -362,6 +381,7 @@ alias TypeSeq = AliasSeq!(int, double, string);
 ```
 
 ### Iterating Alias Sequences
+
 ```d
 import std.meta : AliasSeq;
 
@@ -378,6 +398,7 @@ static foreach (i; 0 .. Types.length) {
 ## `static foreach` (DIP 1010)
 
 ### Basic static foreach
+
 ```d
 // Iterate at compile-time without run-time overhead
 static foreach (i; 0 .. 5) {
@@ -392,6 +413,7 @@ static foreach (i; 0 .. 5) {
 ```
 
 ### static foreach over types
+
 ```d
 import std.meta : AliasSeq;
 
@@ -407,6 +429,7 @@ static foreach (i, T; Types) {
 ```
 
 ### static foreach with compile-time state
+
 ```d
 import std.meta : AliasSeq;
 
@@ -421,6 +444,7 @@ static foreach (i, T; Types) {
 ## Compile-Time Function Execution
 
 ### CTFE Basics
+
 ```d
 // Function that can run at compile-time
 pure int factorial(int n) {
@@ -437,6 +461,7 @@ int[SIZE] arr;  // int[3628800]
 ```
 
 ### CTFE Requirements
+
 ```d
 // Must be pure and @safe (usually)
 pure int compute(int x) {
@@ -448,6 +473,7 @@ enum result = compute(21);
 ```
 
 ### CTFE with Arrays
+
 ```d
 // Build array at compile-time
 int[] buildArray(int size) {
@@ -462,6 +488,7 @@ enum arr = buildArray(10);  // [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
 ```
 
 ### CTFE with Strings
+
 ```d
 // String manipulation at compile-time
 string reverseString(string s) {
@@ -476,11 +503,12 @@ enum reversed = reverseString("hello");  // "olleh"
 ```
 
 ### CTFE with Classes
+
 ```d
 class Config {
     string name;
     int value;
-    
+
     this(string name, int value) {
         this.name = name;
         this.value = value;
@@ -495,6 +523,7 @@ config.value = 42;
 ## Mixins
 
 ### String Mixins
+
 ```d
 // Generate code at compile-time
 string generateCode(string name) {
@@ -508,6 +537,7 @@ myFunction();
 ```
 
 ### Template Mixins
+
 ```d
 // Reusable template mixin
 template Equality() {
@@ -515,7 +545,7 @@ template Equality() {
         // Generate equality comparison
         return true;
     }
-    
+
     int opCmp(ref const typeof(this) other) const {
         // Generate comparison
         return 0;
@@ -525,12 +555,13 @@ template Equality() {
 struct MyStruct {
     int x;
     int y;
-    
+
     mixin Equality;
 }
 ```
 
 ### Mixin with Variables
+
 ```d
 void example() {
     enum code = "int x = 42;";
@@ -540,6 +571,7 @@ void example() {
 ```
 
 ### Mixin with Templates
+
 ```d
 template GenerateMethods(string name) {
     mixin(`void ` ~ name ~ `() {
@@ -554,6 +586,7 @@ class MyClass {
 ```
 
 ### q{} String Literal
+
 ```d
 // q{} allows embedding code without escaping
 string code = q{
@@ -567,6 +600,7 @@ string code = q{
 ```
 
 ### Mixin for Code Generation
+
 ```d
 template GenerateProperties(names...) {
     static foreach (name; names) {
@@ -609,6 +643,7 @@ template Unpack(T...) {
 ## std.meta
 
 ### staticMap
+
 ```d
 import std.meta : staticMap;
 
@@ -621,6 +656,7 @@ alias PtrTypes = staticMap!(MakePtr, int, double, string);
 ```
 
 ### Filter
+
 ```d
 import std.meta : Filter;
 
@@ -630,6 +666,7 @@ alias Integers = Filter!(isIntegral, int, double, string, long);
 ```
 
 ### Erase
+
 ```d
 import std.meta : Erase;
 
@@ -639,6 +676,7 @@ alias WithoutInt = Erase!(int, int, double, string);
 ```
 
 ### allSatisfy / anySatisfy
+
 ```d
 import std.meta : allSatisfy, anySatisfy;
 
@@ -652,6 +690,7 @@ static if (anySatisfy!(isFloatingPoint, int, double, string)) {
 ```
 
 ### Alias
+
 ```d
 import std.meta : Alias;
 
@@ -662,6 +701,7 @@ alias MyInt = Alias!(int);
 ## std.traits
 
 ### Type Categories
+
 ```d
 import std.traits : isIntegral, isFloatingPoint, isNumeric,
                     isPointer, isArray, isAssociativeArray,
@@ -678,6 +718,7 @@ void example(T)() {
 ```
 
 ### Function Traits
+
 ```d
 import std.traits : isFunction, isCallable, isDelegate,
                     ReturnType, Parameters;
@@ -696,6 +737,7 @@ alias Params = Parameters!Func;  // AliasSeq!(int, int)
 ```
 
 ### Aggregate Traits
+
 ```d
 import std.traits : hasMember, hasStaticMember, isNested,
                     BaseClassesTuple, InterfacesTuple;
@@ -715,6 +757,7 @@ alias Intfs = InterfacesTuple!(MyClass);
 ```
 
 ### Type Conversion
+
 ```d
 import std.traits : isImplicitlyConvertible, isAssignable,
                     CommonType, CopyConstness;
@@ -733,6 +776,7 @@ alias CC = CopyConstness!(int, const int);  // const int
 ```
 
 ### Qualifier Operations
+
 ```d
 import std.traits : Unqual, Unconst, Unshared;
 
@@ -751,6 +795,7 @@ alias US = Unshared!(shared int);  // int
 D's compile-time introspection (`__traits`), string mixins, UDAs, and template-based expansion provide a powerful macro system for generating code at compile time without external preprocessors.
 
 ### String Mixins for Code Generation
+
 ```d
 import std.stdio;
 
@@ -759,7 +804,8 @@ enum code = q{ writeln("Generated!"); };
 void genMixinStr() { mixin(code); }
 ```
 
-### Using __traits for Introspection
+### Using \_\_traits for Introspection
+
 ```d
 import std.stdio;
 struct S { int x, y; }
@@ -771,6 +817,7 @@ void genTraitsIntro() {
 ```
 
 ### User-Defined Attributes (UDAs) for Code Gen
+
 ```d
 import std.stdio;
 struct Serializable { string name; }
@@ -789,6 +836,7 @@ void genUDAIntro() {
 ```
 
 ### static foreach Code Expansion
+
 ```d
 import std.stdio;
 void genStaticForeachExpand() {
@@ -800,6 +848,7 @@ void genStaticForeachExpand() {
 ```
 
 ### Template Code Generation with staticMap
+
 ```d
 import std.meta : staticMap;
 import std.stdio;
@@ -815,6 +864,7 @@ void genStaticMapDemo() {
 ```
 
 ### Compile-Time Format Strings
+
 ```d
 import std.format : format;
 import std.stdio;
@@ -823,6 +873,7 @@ void genFmtString() { writeln(greeting); }
 ```
 
 ### Mixin Templates (parameterized code blocks)
+
 ```d
 import std.stdio;
 
@@ -845,6 +896,7 @@ void genMixinTempl() {
 ## Quick Reference
 
 ### Template Basics
+
 ```d
 // Function template
 auto func(T)(T param) { }
@@ -860,6 +912,7 @@ auto func(T)(T param) if (is(T == int)) { }
 ```
 
 ### Template Parameters
+
 ```d
 // Type parameter
 auto func(T)(T param) { }
@@ -875,6 +928,7 @@ template TemplateTemplate(Template, T) { }
 ```
 
 ### Template Constraints
+
 ```d
 // if constraint
 auto func(T)(T param) if (isNumeric!T) { }
@@ -889,6 +943,7 @@ void example(T)() {
 ```
 
 ### Variadic Templates
+
 ```d
 // Variadic function
 auto func(T...)(T args) { }
@@ -905,6 +960,7 @@ enum s = Square!5;  // 25
 ```
 
 ### static foreach
+
 ```d
 import std.meta : AliasSeq;
 
@@ -917,6 +973,7 @@ static foreach_reverse (i; 0 .. 10) { }  // Reverse
 ```
 
 ### CTFE
+
 ```d
 // Compile-time function
 pure int func(int x) { return x * 2; }
@@ -934,6 +991,7 @@ enum arr = buildArray(10);
 ```
 
 ### Tuple Unpacking
+
 ```d
 import std.typecons : tuple;
 
@@ -945,6 +1003,7 @@ auto c = t[2];  // 3.14
 ```
 
 ### Mixins
+
 ```d
 // String mixin (with a compile-time string)
 mixin("int x = 42;");
@@ -955,6 +1014,7 @@ mixin Simple!();
 ```
 
 ### std.meta
+
 ```d
 import std.meta : AliasSeq, staticMap, Filter, Erase,
                   allSatisfy, anySatisfy, Reverse;
@@ -968,6 +1028,7 @@ alias Reversed = Reverse!(Seq);
 ```
 
 ### std.traits
+
 ```d
 import std.traits : isIntegral, isFloatingPoint, isNumeric,
                     isPointer, isArray, isCallable,
@@ -989,6 +1050,7 @@ void example(T, alias func)() {
 ## Common Idioms
 
 ### Type-Safe Factory
+
 ```d
 auto create(T)(T value) {
     static if (isNumeric!T) {
@@ -1000,6 +1062,7 @@ auto create(T)(T value) {
 ```
 
 ### Generic Swap
+
 ```d
 void swap(T)(ref T a, ref T b) {
     T temp = a;
@@ -1009,6 +1072,7 @@ void swap(T)(ref T a, ref T b) {
 ```
 
 ### Compile-Time Array Generation
+
 ```d
 int[] generateArray(int size) {
     int[] arr = new int[size];
@@ -1022,6 +1086,7 @@ enum squares = generateArray(10);  // [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
 ```
 
 ### Mixin for Operator Overloading
+
 ```d
 struct Point {
     int x, y;
@@ -1040,6 +1105,7 @@ template OpOverload() {
 ```
 
 ## References
+
 - [D Language Specification: Templates](https://dlang.org/spec/template.html)
 - [D Language Specification: CTFE](https://dlang.org/spec/compile-time.html)
 - [Phobos std.meta](https://dlang.org/phobos/std_meta.html)

@@ -2,7 +2,7 @@
 name: d-lang-ffi-interop
 description: >-
   D FFI and cross-language interop: extern(C/C++/ObjC) linkage, COM,
-  pragma (lib, mangle, inline, msg), C header import via core.stdc.*, 
+  pragma (lib, mangle, inline, msg), C header import via core.stdc.*,
   Better C mode, calling conventions. Use when calling C/C++/ObjC
   libraries from D or exposing D to other languages.
 license: MIT
@@ -26,9 +26,9 @@ Comprehensive guide to D's foreign function interface capabilities: calling C/C+
 - [pragma(inline) — Inline Hints](#pragmainline---inline-hints)
 - [pragma(msg) — Compile-Time Messages](#pragma-msg---compile-time-messages)
 - [pragma(startaddress) — Entry Point](#pragmastartaddress---entry-point)
-- [C Standard Library via core.stdc.*](#c-standard-library-via-corestdc)
-- [POSIX via core.sys.*](#posix-via-coresys)
-- [Linux-Specific via core.sys.linux.*](#linux-specific-via-coresyslinux)
+- [C Standard Library via core.stdc.\*](#c-standard-library-via-corestdc)
+- [POSIX via core.sys.\*](#posix-via-coresys)
+- [Linux-Specific via core.sys.linux.\*](#linux-specific-via-coresyslinux)
 - [Better C Mode](#better-c-mode)
 - [Calling Conventions](#calling-conventions)
 - [Function Pointer Interop](#function-pointer-interop)
@@ -498,7 +498,7 @@ extern(C) void myStart() {
 pragma(startaddress, myStart);
 ```
 
-## C Standard Library via core.stdc.*
+## C Standard Library via core.stdc.\*
 
 D provides bindings to the C standard library through `core.stdc.*` modules.
 
@@ -597,7 +597,7 @@ void cMemoryExample() {
 }
 ```
 
-## POSIX via core.sys.*
+## POSIX via core.sys.\*
 
 D provides POSIX system call bindings through `core.sys.posix.*`.
 
@@ -665,7 +665,7 @@ void main() {
 }
 ```
 
-## Linux-Specific via core.sys.linux.*
+## Linux-Specific via core.sys.linux.\*
 
 ### Linux sys/stat via POSIX
 
@@ -830,7 +830,7 @@ extern(System) int systemConvention(int p, int q) {
 ```d
 // Valid linkage identifiers in D:
 extern(D) int dFunc();       // D default
-extern(C) int cFunc();       // C convention    
+extern(C) int cFunc();       // C convention
 extern(Windows) int winFunc(); // Windows stdcall
 extern(System) int sysFunc(); // System default
 extern(C++) int cppFunc();   // C++ mangling
@@ -974,6 +974,7 @@ void main() {
 ## Quick Reference
 
 ### Linkage Attributes
+
 ```d
 extern(C)        // C ABI and name mangling
 extern(C++)      // C++ name mangling
@@ -985,6 +986,7 @@ extern(Pascal)   // Pascal calling convention
 ```
 
 ### pragma Summary
+
 ```d
 // pragma(inline, true) applies to the next function declaration
 pragma(inline, true)
@@ -1001,7 +1003,8 @@ void testInline() {
 }
 ```
 
-### core.stdc.* Modules
+### core.stdc.\* Modules
+
 ```d
 import core.stdc.stdlib : malloc, free, atoi, rand;
 import std.string : toStringz;
@@ -1013,7 +1016,8 @@ void cStdUsage() {
 }
 ```
 
-### core.sys.* Modules
+### core.sys.\* Modules
+
 ```d
 import core.sys.posix.fcntl : open, O_RDONLY, O_CREAT;
 // import core.sys.posix.unistd : close, read, write;
@@ -1023,6 +1027,7 @@ import core.sys.posix.fcntl : open, O_RDONLY, O_CREAT;
 ```
 
 ### Better C Checklist
+
 ```d
 // Compile: ldc2 -betterC program.d
 // Entry: extern(C) void main()

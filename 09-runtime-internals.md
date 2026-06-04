@@ -16,6 +16,7 @@ metadata:
 Comprehensive guide to D's druntime internals: garbage collection, type information system, Object/Throwable hierarchy, array and string internals, lifetime management, module lifecycle, and threading primitives.
 
 ## Table of Contents
+
 - [Garbage Collection (core.memory)](#garbage-collection-corememory)
 - [TypeInfo and typeid](#typeinfo-and-typeid)
 - [Object Base Class](#object-base-class)
@@ -31,6 +32,7 @@ Comprehensive guide to D's druntime internals: garbage collection, type informat
 ## Garbage Collection (core.memory)
 
 ### GC Enable/Disable
+
 ```d
 import core.memory : GC;
 
@@ -42,6 +44,7 @@ void toggleGC() {
 ```
 
 ### Force Collection
+
 ```d
 import core.memory : GC;
 
@@ -51,6 +54,7 @@ void forceCollect() {
 ```
 
 ### GC Statistics
+
 ```d
 import core.memory : GC;
 import std.stdio;
@@ -63,19 +67,21 @@ void printGCStats() {
 ```
 
 ### GC Roots
+
 ```d
 import core.memory : GC;
 
 void manageRoots() {
     int value = 42;
     void* root = &value;
-    
+
     GC.addRoot(root);      // Prevent root from being collected
     GC.removeRoot(root);   // Allow root to be collected
 }
 ```
 
 ### GC Allocation
+
 ```d
 import core.memory : GC;
 
@@ -87,6 +93,7 @@ void gcAllocate() {
 ```
 
 ### GC Allocation with Attributes
+
 ```d
 import core.memory : GC;
 
@@ -98,6 +105,7 @@ void gcAllocateAttr() {
 ```
 
 ### GC-Free Code with @nogc
+
 ```d
 void noGCFunc() @nogc {
     // No GC allocations allowed
@@ -108,13 +116,14 @@ void noGCFunc() @nogc {
 ```
 
 ### GC Disable Pattern for Real-Time
+
 ```d
 import core.memory : GC;
 
 void realTimeSection() {
     GC.disable();
     scope(exit) GC.enable();  // Always re-enable on exit
-    
+
     // Deterministic execution here
     // No GC pauses possible
 }
@@ -123,6 +132,7 @@ void realTimeSection() {
 ## TypeInfo and typeid
 
 ### Basic typeid Usage
+
 ```d
 import std.stdio;
 
@@ -134,6 +144,7 @@ void checkTypes() {
 ```
 
 ### typeid with Classes
+
 ```d
 import std.stdio;
 
@@ -143,13 +154,14 @@ class Dog : Animal { }
 void checkClassTypes() {
     auto ti = typeid(Dog);
     writeln(ti.toString()); // Full type name
-    
+
     Animal a = new Dog();
     writeln(typeid(a));     // Runtime type
 }
 ```
 
 ### Runtime Type Comparison
+
 ```d
 import std.stdio;
 
@@ -157,13 +169,14 @@ void compareTypes() {
     int x = 42;
     bool isInt = typeid(int) == typeid(typeof(x));
     writeln(isInt);  // true
-    
+
     bool isNotString = typeid(int) != typeid(string);
     writeln(isNotString);  // true
 }
 ```
 
 ### TypeInfo for Value Types
+
 ```d
 import std.stdio;
 
@@ -179,6 +192,7 @@ void structTypeInfo() {
 ```
 
 ### TypeInfo Hierarchy Navigation
+
 ```d
 import std.stdio;
 
@@ -188,33 +202,35 @@ class Derived : Base { }
 void typeHierarchy() {
     auto derivedTi = typeid(Derived);
     writeln(derivedTi.toString());  // "class Derived"
-    
+
     auto baseTi = typeid(Base);
     writeln(baseTi.toString());  // "class Base"
 }
 ```
 
 ### typeid with Templates
+
 ```d
 import std.stdio;
 
 void templateTypes() {
     auto ti1 = typeid(int[]);
     writeln(ti1.toString());  // "int[]"
-    
+
     auto ti2 = typeid(int[string]);
     writeln(ti2.toString());  // "int[string]"
 }
 ```
 
 ### typeid Returns TypeInfo
+
 ```d
 import std.stdio;
 
 void typeInfoReturn() {
     TypeInfo ti = typeid(double);
     writeln(ti.toString());  // "double"
-    
+
     TypeInfo ti2 = typeid(bool);
     writeln(ti2.toString());  // "bool"
 }
@@ -223,6 +239,7 @@ void typeInfoReturn() {
 ## Object Base Class
 
 ### Object is Root of All Classes
+
 ```d
 class MyClass {
     int value;
@@ -237,16 +254,17 @@ void checkObjectBase() {
 ```
 
 ### Object.toString
+
 ```d
 import std.stdio;
 
 class Person {
     string name;
-    
+
     this(string n) {
         name = n;
     }
-    
+
     override string toString() {
         return "Person(" ~ name ~ ")";
     }
@@ -259,16 +277,17 @@ void testToString() {
 ```
 
 ### Object.opEquals
+
 ```d
 import std.stdio;
 
 class Box {
     int value;
-    
+
     this(int v) {
         value = v;
     }
-    
+
     override bool opEquals(Object other) {
         auto b = cast(Box) other;
         return b !is null && value == b.value;
@@ -283,20 +302,21 @@ void testOpEquals() {
 ```
 
 ### Object.toHash
+
 ```d
 import std.stdio;
 
 class Key {
     int id;
-    
+
     this(int i) {
         id = i;
     }
-    
+
     override size_t toHash() const {
         return id;
     }
-    
+
     override bool opEquals(Object other) const {
         auto k = cast(Key) other;
         return k !is null && id == k.id;
@@ -310,16 +330,17 @@ void testToHash() {
 ```
 
 ### Object.opCmp
+
 ```d
 import std.stdio;
 
 class Item {
     int priority;
-    
+
     this(int p) {
         priority = p;
     }
-    
+
     override int opCmp(Object other) {
         auto i = cast(Item) other;
         if (i is null) return 1;
@@ -337,6 +358,7 @@ void testOpCmp() {
 ## Throwable Hierarchy
 
 ### Exception Base Class
+
 ```d
 import std.stdio;
 
@@ -351,6 +373,7 @@ void throwException() {
 ```
 
 ### AssertError
+
 ```d
 import std.stdio;
 import core.exception : AssertError;
@@ -366,6 +389,7 @@ void testAssertError() {
 ```
 
 ### RangeError
+
 ```d
 import std.stdio;
 import core.exception : RangeError;
@@ -382,6 +406,7 @@ void testRangeError() {
 ```
 
 ### OutOfMemoryError
+
 ```d
 import std.stdio;
 import core.exception : OutOfMemoryError;
@@ -399,6 +424,7 @@ void testOOM() {
 ```
 
 ### Throwable Properties
+
 ```d
 import std.stdio;
 
@@ -414,6 +440,7 @@ void checkThrowableProps() {
 ```
 
 ### std.exception.enforce
+
 ```d
 import std.stdio;
 import std.exception : enforce;
@@ -429,12 +456,13 @@ void testEnforce() {
 ```
 
 ### Custom Exception
+
 ```d
 import std.stdio;
 
 class MyError : Exception {
     int errorCode;
-    
+
     this(string msg, int code) {
         super(msg);
         errorCode = code;
@@ -453,6 +481,7 @@ void throwCustom() {
 ```
 
 ### Catch Order Matters
+
 ```d
 import std.stdio;
 
@@ -469,6 +498,7 @@ void catchOrder() {
 ## Array and String Internal Layout
 
 ### Dynamic Array Structure
+
 ```d
 import std.stdio;
 
@@ -481,6 +511,7 @@ void arrayLayout() {
 ```
 
 ### String is Immutable Char Array
+
 ```d
 import std.stdio;
 
@@ -494,6 +525,7 @@ void stringLayout() {
 ```
 
 ### Array Slice Operations
+
 ```d
 import std.stdio;
 
@@ -506,6 +538,7 @@ void arraySlices() {
 ```
 
 ### Array Concatenation
+
 ```d
 import std.stdio;
 
@@ -518,13 +551,14 @@ void arrayConcat() {
 ```
 
 ### Array Duplication
+
 ```d
 import std.stdio;
 
 void arrayDup() {
     int[] original = [1, 2, 3];
     int[] copy = original.dup;  // Deep copy
-    
+
     copy[0] = 99;
     writeln(original[0]);  // 1 (unchanged)
     writeln(copy[0]);      // 99
@@ -532,21 +566,23 @@ void arrayDup() {
 ```
 
 ### Empty Array vs Null
+
 ```d
 import std.stdio;
 
 void emptyVsNull() {
     int[] empty = [];
     int[] nul = null;
-    
+
     writeln(empty.length);  // 0
     writeln(nul.length);    // 0 (null array has length 0)
-    
+
     writeln(empty == nul);  // true (both are "empty")
 }
 ```
 
 ### Associative Array Internals
+
 ```d
 import std.stdio;
 
@@ -554,13 +590,14 @@ void aaInternals() {
     int[string] map;
     map["one"] = 1;
     map["two"] = 2;
-    
+
     writeln(map.length);  // 2
     writeln(map.keys);    // Range of keys
 }
 ```
 
 ### Multi-Dimensional Array Layout
+
 ```d
 import std.stdio;
 
@@ -576,6 +613,7 @@ void multiDimArray() {
 ## core.lifetime (emplace, move, forward)
 
 ### emplace: Construct in Place
+
 ```d
 import core.lifetime : emplace;
 import core.memory : GC;
@@ -601,6 +639,7 @@ void testEmplacePoint() {
 ```
 
 ### emplace Without Constructor Args
+
 ```d
 import core.lifetime : emplace;
 import core.memory : GC;
@@ -618,6 +657,7 @@ void testEmplaceSimple() {
 ```
 
 ### forward: Preserve Value Category
+
 ```d
 import core.lifetime : forward;
 import std.stdio;
@@ -642,6 +682,7 @@ void callForward() {
 ```
 
 ### move: Transfer Ownership
+
 ```d
 import core.lifetime : move;
 import std.stdio;
@@ -649,26 +690,27 @@ import std.stdio;
 void testMove() {
     int[] src = [1, 2, 3];
     int[] dst = move(src);
-    
+
     writeln(dst.length);  // 3
     writeln(src.length);  // 0 (src is emptied)
 }
 ```
 
 ### move with Structs
+
 ```d
 import core.lifetime : move;
 import std.stdio;
 
 struct Resource {
     int[] data;
-    
+
     // Move constructor
     this(ref Resource other) {
         this.data = other.data;
         other.data = null;
     }
-    
+
     // Disable copy
     @disable this(this);
 }
@@ -681,18 +723,19 @@ void testMoveStruct() {
 ```
 
 ### moveEmplace: Move-Construct in Place
+
 ```d
 import core.lifetime : moveEmplace;
 import core.memory : GC;
 
 struct Movable {
     int value;
-    
+
     this(ref Movable other) {
         value = other.value;
         other.value = 0;
     }
-    
+
     @disable this(this);
 }
 
@@ -705,6 +748,7 @@ void testMoveEmplace() {
 ```
 
 ### Emplace on Stack Buffer
+
 ```d
 import core.lifetime : emplace;
 import std.stdio;
@@ -712,7 +756,7 @@ import std.stdio;
 struct Small {
     short a;
     short b;
-    
+
     this(short a_, short b_) {
         a = a_;
         b = b_;
@@ -731,6 +775,7 @@ void testStackEmplace() {
 ## core.exception Functions
 
 ### onOutOfMemoryError
+
 ```d
 import core.exception : onOutOfMemoryError, OutOfMemoryError;
 
@@ -746,6 +791,7 @@ void handleOOM() {
 ```
 
 ### onRangeError
+
 ```d
 import core.exception : onRangeError, RangeError;
 
@@ -763,6 +809,7 @@ void handleRange() {
 ## ModuleInfo and Module Lifecycle
 
 ### Module Constructor
+
 ```d
 import std.stdio;
 
@@ -773,6 +820,7 @@ static this() {
 ```
 
 ### Module Destructor
+
 ```d
 import std.stdio;
 
@@ -783,6 +831,7 @@ static ~this() {
 ```
 
 ### Shared Module Constructor
+
 ```d
 import std.stdio;
 
@@ -793,6 +842,7 @@ shared static this() {
 ```
 
 ### Shared Module Destructor
+
 ```d
 import std.stdio;
 
@@ -803,6 +853,7 @@ shared static ~this() {
 ```
 
 ### Module Init Order
+
 ```d
 // Module constructors run in dependency order:
 // 1. Modules with no dependencies first
@@ -817,6 +868,7 @@ int initialize() {
 ```
 
 ### ModuleInfo Structure
+
 ```d
 // ModuleInfo contains:
 // - Module name
@@ -830,6 +882,7 @@ int initialize() {
 ## Thread-Local Storage
 
 ### Default: Thread-Local
+
 ```d
 import std.stdio;
 
@@ -842,7 +895,8 @@ void checkTLS() {
 }
 ```
 
-### __gshared: True Global
+### \_\_gshared: True Global
+
 ```d
 import std.stdio;
 
@@ -856,6 +910,7 @@ void checkGShared() {
 ```
 
 ### shared: Type-Safe Shared
+
 ```d
 import std.stdio;
 
@@ -869,7 +924,8 @@ void checkShared() {
 }
 ```
 
-### __gshared vs shared vs TLS
+### \_\_gshared vs shared vs TLS
+
 ```d
 // Thread-local (default): each thread has own copy
 int tlsVar = 0;
@@ -882,6 +938,7 @@ shared int shVar = 0;
 ```
 
 ### TLS with Structs
+
 ```d
 import std.stdio;
 
@@ -900,7 +957,8 @@ void useThreadData() {
 }
 ```
 
-### __gshared Array
+### \_\_gshared Array
+
 ```d
 import std.stdio;
 
@@ -916,6 +974,7 @@ void useSharedBuffer() {
 ## core.thread Basics
 
 ### Create and Start Thread
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -930,6 +989,7 @@ void createThread() {
 ```
 
 ### Thread with Named Function
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -946,6 +1006,7 @@ void createThreadWithFunc() {
 ```
 
 ### Thread with Arguments
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -962,6 +1023,7 @@ void createThreadWithArgs() {
 ```
 
 ### Thread Properties
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -970,10 +1032,10 @@ void checkThreadProps() {
     auto t = new Thread({
         // work
     });
-    
+
     writeln(t.id);      // Thread ID
     writeln(t.isRunning);  // false (not started yet)
-    
+
     t.start();
     writeln(t.isRunning);  // true
     t.join();
@@ -981,13 +1043,14 @@ void checkThreadProps() {
 ```
 
 ### Multiple Threads
+
 ```d
 import core.thread : Thread;
 import std.stdio;
 
 void createMultipleThreads() {
     Thread[3] threads;
-    
+
     foreach (i; 0 .. 3) {
         int id = i;
         threads[i] = new Thread(() {
@@ -995,7 +1058,7 @@ void createMultipleThreads() {
         });
         threads[i].start();
     }
-    
+
     foreach (t; threads) {
         t.join();
     }
@@ -1003,6 +1066,7 @@ void createMultipleThreads() {
 ```
 
 ### Thread Priority
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -1012,13 +1076,14 @@ void setThreadPriority() {
         writeln("High priority thread");
     });
     t.start();
-    
+
     // Set thread priority (platform dependent)
     t.join();
 }
 ```
 
 ### Thread Duration
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -1028,7 +1093,7 @@ void setThreadDuration() {
         writeln("Joinable thread");
     });
     t.start();
-    
+
     // Thread duration policy (platform dependent)
     t.join();
 }
@@ -1037,6 +1102,7 @@ void setThreadDuration() {
 ## Quick Reference
 
 ### GC API
+
 ```d
 import core.memory : GC;
 GC.enable();              // Resume GC
@@ -1049,6 +1115,7 @@ auto stats = GC.stats();  // Get statistics
 ```
 
 ### TypeInfo
+
 ```d
 auto ti = typeid(int);        // TypeInfo for type
 auto ti2 = typeid(42);        // Runtime type of value
@@ -1057,6 +1124,7 @@ typeid(int) == typeid(int);   // Type comparison
 ```
 
 ### Object Methods
+
 ```d
 obj.toString()        // String representation
 obj.opEquals(other)   // Equality check
@@ -1065,6 +1133,7 @@ obj.opCmp(other)      // Comparison (-1, 0, +1)
 ```
 
 ### core.lifetime
+
 ```d
 import core.lifetime;
 emplace!T(ptr, args...)    // Construct T at ptr
@@ -1074,6 +1143,7 @@ moveEmplace!T(ptr, src)    // Move-construct at ptr
 ```
 
 ### Module Lifecycle
+
 ```d
 static this() { }          // Per-thread module constructor
 static ~this() { }         // Per-thread module destructor
@@ -1082,6 +1152,7 @@ shared static ~this() { }  // Global module destructor
 ```
 
 ### Thread-Local Storage
+
 ```d
 int tlsVar;                // Thread-local (default)
 __gshared int gsVar;       // True global, no checks
@@ -1090,6 +1161,7 @@ immutable int immVar;      // Immutable, thread-safe
 ```
 
 ### core.thread
+
 ```d
 import core.thread : Thread;
 void worker() {}
@@ -1102,6 +1174,7 @@ s.isRunning;                   // Running status
 ```
 
 ## References
+
 - [core.memory](https://dlang.org/phobos/core_memory.html)
 - [core.lifetime](https://dlang.org/phobos/core_lifetime.html)
 - [core.exception](https://dlang.org/phobos/core_exception.html)

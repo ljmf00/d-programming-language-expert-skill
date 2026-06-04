@@ -17,6 +17,7 @@ metadata:
 Subtle behaviors that most often produce wrong or non-idiomatic AI-generated D code. Read this alongside the task-specific subskill.
 
 ## Table of Contents
+
 - [Array Slices Have Reference Semantics](#array-slices-have-reference-semantics)
 - [`string` Is Immutable](#string-is-immutable)
 - [`foreach` Copies; `foreach ref` Aliases](#foreach-copies-foreach-ref-aliases)

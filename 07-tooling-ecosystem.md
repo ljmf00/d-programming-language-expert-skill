@@ -17,6 +17,7 @@ metadata:
 Comprehensive guide to D's compilers, package manager, build system, development tools, and ecosystem.
 
 ## Table of Contents
+
 - [DMD - Reference Compiler](#dmd---reference-compiler)
 - [LDC - LLVM-Based Compiler](#ldc---llvm-based-compiler)
 - [GDC - GCC-Based Compiler](#gdc---gcc-based-compiler)
@@ -32,9 +33,11 @@ Comprehensive guide to D's compilers, package manager, build system, development
 ## DMD - Reference Compiler
 
 ### Overview
+
 DMD (Digital Mars D) is the reference compiler for D. It's implemented in D itself and provides fast compilation times.
 
 ### Basic Usage
+
 ```bash
 # Compile a single file
 dmd main.d
@@ -56,6 +59,7 @@ dmd -w main.d
 ```
 
 ### Common Flags
+
 ```bash
 # Compilation
 -c              # Compile only, no link
@@ -91,6 +95,7 @@ dmd -w main.d
 ```
 
 ### DMD Environment
+
 ```bash
 # Set DMD home directory
 export DMD_HOME=/path/to/dmd
@@ -103,6 +108,7 @@ export DFLAGS="-L-L/path/to/libs"
 ```
 
 ### DMD Subcommands
+
 ```bash
 dmd -run main.d        # Compile and run immediately
 dmd -unittest main.d   # Compile with unit tests enabled
@@ -115,6 +121,7 @@ dmd -vgc main.d        # Show GC allocations
 ```
 
 #### Better C Mode
+
 ```bash
 # Compile in Better C mode (no D runtime needed)
 dmd -betterC main.d
@@ -129,6 +136,7 @@ dmd -betterC main.d
 ```
 
 ### Code Coverage
+
 ```bash
 # Enable code coverage
 dmd -cov main.d
@@ -145,6 +153,7 @@ dub build --build=coverage
 ```
 
 ### Profiling
+
 ```bash
 # Profile with DMD
 dmd -profile main.d
@@ -158,6 +167,7 @@ ldc2 -profile main.d
 ```
 
 ## Integration with Other Languages
+
 ```bash
 # Link with C libraries
 dmd main.d -L-lm      # Link with math library
@@ -173,9 +183,11 @@ dmd main.d clib.o     # Link with C object files
 ## LDC - LLVM-Based Compiler
 
 ### Overview
+
 LDC is a D compiler based on LLVM. It provides better optimization and targeting of multiple architectures.
 
 ### Basic Usage
+
 ```bash
 # Compile a single file
 ldc2 main.d
@@ -197,6 +209,7 @@ ldc2 -output-s main.d
 ```
 
 ### LDC Performance Flags
+
 ```bash
 # Optimization levels
 -O0  # No optimization (fast compile)
@@ -220,6 +233,7 @@ ldc2 -output-s main.d
 ```
 
 ### LDC vs DMD Features
+
 ```d
 // DMD-specific features
 version(D_Version2) { }
@@ -236,6 +250,7 @@ static if (__traits(compiles, __VERSION__)) {
 ```
 
 ### LDC Configuration
+
 ```bash
 # LDC configuration file
 # /etc/ldc2.conf or ~/.ldc2.conf
@@ -255,9 +270,11 @@ static if (__traits(compiles, __VERSION__)) {
 ## GDC - GCC-Based Compiler
 
 ### Overview
+
 GDC uses the GCC backend for D compilation. It provides good performance and integration with GCC tools.
 
 ### Basic Usage
+
 ```bash
 # Compile
 gdc main.d
@@ -272,9 +289,11 @@ gdc -fversion=MyVersion main.d
 ## DUB - Package Manager
 
 ### Overview
+
 DUB is the official package manager and build system for D. It handles dependencies, builds, and package management.
 
 ### Basic Commands
+
 ```bash
 # Initialize a new project
 dub init myproject
@@ -312,6 +331,7 @@ dub --help
 ```
 
 ### Project initialization
+
 ```bash
 # Interactive
 dub init
@@ -327,6 +347,7 @@ dub init myproject --format=json # JSON format
 ```
 
 ### Dependency Management
+
 ```bash
 # Search for packages
 dub search term
@@ -346,6 +367,7 @@ dub list
 ```
 
 ### Build Cache
+
 ```bash
 # Clear build cache
 dub clean
@@ -359,47 +381,49 @@ dub build --force
 ## Build Configuration
 
 ### dub.json Format
+
 ```json
 {
-    "name": "myproject",
-    "description": "My D project",
-    "authors": ["Author Name"],
-    "license": "BSL-1.0",
-    "targetType": "executable",
-    "sourcePaths": ["source"],
-    "importPaths": ["source", "views"],
-    "stringImportPaths": ["views"],
-    "dependencies": {
-        "vibe-d": "~>0.9.0",
-        "arsd-official:http2": "~>2.0"
+  "name": "myproject",
+  "description": "My D project",
+  "authors": ["Author Name"],
+  "license": "BSL-1.0",
+  "targetType": "executable",
+  "sourcePaths": ["source"],
+  "importPaths": ["source", "views"],
+  "stringImportPaths": ["views"],
+  "dependencies": {
+    "vibe-d": "~>0.9.0",
+    "arsd-official:http2": "~>2.0"
+  },
+  "buildTypes": {
+    "debug": {
+      "buildOptions": ["debugMode", "debugInfo"]
     },
-    "buildTypes": {
-        "debug": {
-            "buildOptions": ["debugMode", "debugInfo"]
-        },
-        "release": {
-            "buildOptions": ["releaseMode", "optimize"],
-            "lflags": ["-O2"]
-        }
+    "release": {
+      "buildOptions": ["releaseMode", "optimize"],
+      "lflags": ["-O2"]
+    }
+  },
+  "configurations": [
+    {
+      "name": "library",
+      "targetType": "library"
     },
-    "configurations": [
-        {
-            "name": "library",
-            "targetType": "library"
-        },
-        {
-            "name": "executable",
-            "targetType": "executable",
-            "mainSourceFile": "source/app.d"
-        }
-    ],
-    "dflags-ldc": ["-mcpu=native"],
-    "lflags": ["-L-lm"],
-    "libs": ["m"]
+    {
+      "name": "executable",
+      "targetType": "executable",
+      "mainSourceFile": "source/app.d"
+    }
+  ],
+  "dflags-ldc": ["-mcpu=native"],
+  "lflags": ["-L-lm"],
+  "libs": ["m"]
 }
 ```
 
 ### dub.sdl Format
+
 ```sdl
 name "myproject"
 description "My D project"
@@ -421,6 +445,7 @@ buildType "release"
 ```
 
 ### Build Options
+
 ```json
 // Common build options
 "buildOptions": [
@@ -449,6 +474,7 @@ buildType "release"
 ```
 
 ### Compilation with DUB
+
 ```bash
 # Build specific configuration
 dub build --config=library
@@ -472,6 +498,7 @@ dub build --combined
 ## DDoc - Documentation Generator
 
 ### DDoc Comments
+
 ```d
 /**
  * Brief description of the function.
@@ -505,6 +532,7 @@ int myFunction2() { }
 ```
 
 ### Using DDoc
+
 ```bash
 # Generate documentation
 dub build --build=docs
@@ -520,6 +548,7 @@ dub build --build=docs
 ```
 
 ### DDoc Macros
+
 ```d
 // Common macros
 $(D ...)          // D code inline
@@ -535,6 +564,7 @@ $(SUBREF module, name) // Submodule reference
 ## Development Tools
 
 ### Code Formatting (dfmt)
+
 ```bash
 # Format a file
 dfmt --in-place source.d
@@ -550,25 +580,27 @@ dfmt --in-place --config=dfmt.json source.d
 ```
 
 ### Create dfmt Configuration
+
 ```json
 {
-    "braceStyle": "allman",
-    "softMaxLineLength": 80,
-    "indentSize": 4,
-    "selectiveImportSpace": true,
-    "spaceAfterCast": true,
-    "spaceAfterKeyword": true,
-    "spaceBeforeParentheses": false,
-    "tabs": false,
-    "alignParallelAssignments": true,
-    "alignSections": true,
-    "operatorsBlockStartAtLineEnd": true,
-    "importWrap": false,
-    "maxLineLength": 120
+  "braceStyle": "allman",
+  "softMaxLineLength": 80,
+  "indentSize": 4,
+  "selectiveImportSpace": true,
+  "spaceAfterCast": true,
+  "spaceAfterKeyword": true,
+  "spaceBeforeParentheses": false,
+  "tabs": false,
+  "alignParallelAssignments": true,
+  "alignSections": true,
+  "operatorsBlockStartAtLineEnd": true,
+  "importWrap": false,
+  "maxLineLength": 120
 }
 ```
 
 ### Linting (D-Scanner)
+
 ```bash
 # Run linter
 dscanner --styleCheck source.d
@@ -584,6 +616,7 @@ dscanner --report source.d
 ```
 
 ### DCD (Code Completion)
+
 ```bash
 # Start DCD server
 dcd-server
@@ -599,6 +632,7 @@ dcd-client --shutdown
 ```
 
 ### dfix (Automatic Fixes)
+
 ```bash
 # Fix common issues
 dfix source.d
@@ -614,6 +648,7 @@ dfix --config=dfix.json source.d
 ```
 
 ### rdmd (Script Runner)
+
 ```bash
 # Run D script directly (shebang compatible)
 rdmd my_script.d
@@ -630,6 +665,7 @@ rdmd --build-only my_script.d
 ```
 
 ### htod (C/C++ Header to D)
+
 ```bash
 # Convert C header to D
 htod header.h > header.d
@@ -642,6 +678,7 @@ htod -i header.h
 ```
 
 ### ddemangle (Symbol Demangling)
+
 ```bash
 # Demangle D symbols
 ddemangle _D3std5stdio7__T5writelnTAhZ
@@ -651,6 +688,7 @@ dmd -c file.d 2>&1 | ddemangle
 ```
 
 ### DDox (API Documentation Generator)
+
 ```bash
 # Generate API docs with DDox
 dub build --build=ddox
@@ -663,6 +701,7 @@ dub run ddox -- --file-ignore=*.private.d
 ```
 
 ### libdparse (D Source Parsing)
+
 ```d
 import libdparse;
 import std.stdio;
@@ -682,6 +721,7 @@ auto parsed = parseModule(caches, source);
 ```
 
 ### unit-threaded (Testing Framework)
+
 ```bash
 # Install via DUB
 dub add unit-threaded
@@ -697,6 +737,7 @@ dub run unit-threaded -- -f source/ --report
 ```
 
 ### undeaD (Dead Code Removal)
+
 ```bash
 # Find dead code
 undeaD myproject/
@@ -706,6 +747,7 @@ undeaD -- dub
 ```
 
 ### DustMite (Test Case Reducer)
+
 ```bash
 # Minimize test case
 ./dustmite source.d "dmd -c source.d 2>&1"
@@ -724,14 +766,14 @@ DUB (D's Unified Build system) serves as both build tool and package manager. It
 
 ```json
 {
-    "name": "myapp",
-    "description": "A D application",
-    "authors": ["You"],
-    "license": "MIT",
-    "targetType": "executable",
-    "dependencies": {
-        "vibe-d": "~>0.9"
-    }
+  "name": "myapp",
+  "description": "A D application",
+  "authors": ["You"],
+  "license": "MIT",
+  "targetType": "executable",
+  "dependencies": {
+    "vibe-d": "~>0.9"
+  }
 }
 ```
 
@@ -857,6 +899,7 @@ void testDUBLocking() {
 ## Testing and Debugging
 
 ### Unit Tests
+
 ```d
 // Unit tests
 unittest {
@@ -873,6 +916,7 @@ void main() {
 ```
 
 ### Running Tests
+
 ```bash
 # Run unit tests with DMD
 dmd -unittest main.d && ./main
@@ -891,6 +935,7 @@ dub test --build=coverage
 ```
 
 ### Debugging
+
 ```bash
 # Compile with debug symbols
 dmd -g -debug main.d
@@ -907,6 +952,7 @@ lldb ./myprogram
 ```
 
 ### Profiling
+
 ```bash
 # Profile with DMD
 dmd -profile main.d
@@ -959,6 +1005,7 @@ dmd --version  # Show compiler version
 ```
 
 Key recent milestones:
+
 - **2.100.0** - DIP 1000 (scope), improvements to import
 - **2.105.0** - DIP 1030 (named arguments), DIP 1043 (shortened methods)
 - **2.110.0** - DIP 1052 (editions), bitfields added to language (separate from DIP 1051 which is AliasAssign)
@@ -967,6 +1014,7 @@ Key recent milestones:
 ## IDE and Editor Support
 
 ### VS Code
+
 ```bash
 # Install extension
 code --install-extension laurenttrudel:code-d
@@ -982,6 +1030,7 @@ code --install-extension laurenttrudel:code-d
 ```
 
 ### Visual D (Visual Studio)
+
 ```bash
 # Features:
 # - Integrated with Visual Studio
@@ -993,6 +1042,7 @@ code --install-extension laurenttrudel:code-d
 ```
 
 ### Mono-D (MonoDevelop/Xamarin Studio)
+
 ```bash
 # Features:
 # - Cross-platform IDE
@@ -1003,6 +1053,7 @@ code --install-extension laurenttrudel:code-d
 ```
 
 ### Vim/Neovim
+
 ```vim
 " D syntax highlighting
 syntax on
@@ -1013,6 +1064,7 @@ Plug 'd-language/d-tools'
 ```
 
 ### Emacs
+
 ```elisp
 ;; D mode
 (require 'd-mode)
@@ -1025,15 +1077,17 @@ Plug 'd-language/d-tools'
 ## Quick Reference
 
 ### Compiler Quick Comparison
-| Feature | DMD | LDC | GDC |
-|---------|-----|-----|-----|
-| Compilation speed | Fastest | Fast | Moderate |
-| Optimization | Good | Best | Very good |
-| Target support | Limited | Extensive | Extensive |
-| Debug info | Good | Excellent | Good |
-| Cross-compilation | Basic | Advanced | Advanced |
+
+| Feature           | DMD     | LDC       | GDC       |
+| ----------------- | ------- | --------- | --------- |
+| Compilation speed | Fastest | Fast      | Moderate  |
+| Optimization      | Good    | Best      | Very good |
+| Target support    | Limited | Extensive | Extensive |
+| Debug info        | Good    | Excellent | Good      |
+| Cross-compilation | Basic   | Advanced  | Advanced  |
 
 ### DUB Command Summary
+
 ```bash
 dub init           # Initialize project
 dub build          # Build project
@@ -1046,6 +1100,7 @@ dub describe       # Show project info
 ```
 
 ### Compiler Flags Summary
+
 ```bash
 dmd file.d         # Basic compilation
 dmd -O file.d      # With optimization
@@ -1058,6 +1113,7 @@ dmd -run file.d    # Run immediately
 ```
 
 ### Development Tools
+
 ```bash
 dfmt --in-place file.d         # Format code
 dscanner --styleCheck file.d   # Lint code
@@ -1067,18 +1123,20 @@ dustmite file.d script.sh      # Reduce test cases
 ```
 
 ### Build Configuration
+
 ```json
 // dub.json
 {
-    "name": "project",
-    "targetType": "executable",
-    "dependencies": {
-        "vibe-d": "~>0.9.0"
-    }
+  "name": "project",
+  "targetType": "executable",
+  "dependencies": {
+    "vibe-d": "~>0.9.0"
+  }
 }
 ```
 
 ### Documentation Generation
+
 ```bash
 dub build --build=docs    # Generate documentation
 dmd -D file.d             # Generate DDoc

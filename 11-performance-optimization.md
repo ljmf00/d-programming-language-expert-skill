@@ -16,6 +16,7 @@ metadata:
 Comprehensive guide to D performance optimization: SIMD vector types, compiler pragmas, data layout patterns, memory alignment, loop transformations, and LDC-specific optimization techniques.
 
 ## Table of Contents
+
 - [core.simd Types](#coresimd-types)
 - [@inline / @noinline Pragmas](#inline--noinline-pragmas)
 - [Cache-Friendly Data Layout](#cache-friendly-data-layout)
@@ -34,6 +35,7 @@ Comprehensive guide to D performance optimization: SIMD vector types, compiler p
 D provides built-in SIMD vector types through `core.simd` for explicit vectorization. These map directly to hardware SIMD registers (SSE/AVX on x86, NEON on ARM) and support element-wise arithmetic operations.
 
 ### float4 Vector Operations
+
 ```d
 import core.simd;
 
@@ -46,6 +48,7 @@ void float4Demo() {
 ```
 
 ### int4 and short8 Vectors
+
 ```d
 import core.simd;
 
@@ -60,6 +63,7 @@ void intSimdDemo() {
 ```
 
 ### double2 Vector Operations
+
 ```d
 import core.simd;
 
@@ -72,6 +76,7 @@ void double2Demo() {
 ```
 
 ### Vector Load and Store
+
 ```d
 import core.simd;
 
@@ -85,6 +90,7 @@ void vectorLoadStore() {
 ```
 
 ### Vector Reduction Helpers
+
 ```d
 import core.simd;
 import std.stdio;
@@ -105,6 +111,7 @@ void reductionDemo() {
 D offers fine-grained control over function inlining via `pragma(inline, bool)`. LDC also supports `@llvmAttr` for backend-specific hints.
 
 ### Force Inline
+
 ```d
 pragma(inline, true) int square(int x) {
     return x * x;
@@ -116,6 +123,7 @@ void inlineTest() {
 ```
 
 ### Prevent Inlining
+
 ```d
 pragma(inline, false) int debugTrace(int val) {
     return val + 1;  // Never inlined (useful for breakpoints)
@@ -127,6 +135,7 @@ void noinlineTest() {
 ```
 
 ### Selective Inlining with Templates
+
 ```d
 import std.traits : isScalarType;
 
@@ -141,6 +150,7 @@ void templateInlineTest() {
 ```
 
 ### LDC Cold Attribute
+
 ```d
 import ldc.attributes : llvmAttr;
 
@@ -158,6 +168,7 @@ void coldPathTest() {
 Data layout dramatically affects cache performance. The choice between AoS (Array of Structs) and SoA (Struct of Arrays) depends on access patterns.
 
 ### Array of Structs (AoS)
+
 ```d
 struct AosParticle {
     float x, y, z;        // All fields together in memory
@@ -171,6 +182,7 @@ void aosDemo() {
 ```
 
 ### Struct of Arrays (SoA)
+
 ```d
 struct SoaParticles {
     float[] xs, ys, zs;   // Each field stored contiguously
@@ -185,6 +197,7 @@ void soaDemo(SoaParticles p, size_t idx) {
 ```
 
 ### Cache Line Padding
+
 ```d
 struct PaddedCounter {
     align(64) size_t count;  // Occupies own cache line
@@ -198,6 +211,7 @@ void counterDemo() {
 ```
 
 ### Hot/Cold Field Splitting
+
 ```d
 struct Entity {
     int id;
@@ -216,6 +230,7 @@ void entityDemo() {
 Explicit alignment ensures data starts at memory boundaries that match cache line and SIMD register requirements.
 
 ### Struct Alignment
+
 ```d
 struct AlignedBuffer {
     align(16) float x, y, z, w;  // SSE register size alignment
@@ -227,6 +242,7 @@ void alignDemo() {
 ```
 
 ### Class Alignment
+
 ```d
 align(64) class CacheAlignedClass {
     int payload;
@@ -240,6 +256,7 @@ void classAlignDemo() {
 ```
 
 ### Aligned Stack Variables
+
 ```d
 void stackAlignDemo() {
     align(16) int[4] vec = [1, 2, 3, 4];  // Stack vector aligned to 16 bytes
@@ -247,6 +264,7 @@ void stackAlignDemo() {
 ```
 
 ### Aligned Heap Allocation
+
 ```d
 import core.memory : GC;
 import std.stdio;
@@ -263,6 +281,7 @@ void alignedHeapDemo() {
 Small transformations to loops can yield significant speedups by improving cache locality, reducing branch mispredictions, and enabling auto-vectorization.
 
 ### Sum Reduction Loop
+
 ```d
 float sumArray(const float[] arr) {
     float result = 0.0f;
@@ -277,6 +296,7 @@ void reductionLoopDemo() {
 ```
 
 ### Loop Fusion
+
 ```d
 void loopFusion(const float[] a, const float[] b, float[] dest) {
     foreach (i; 0 .. a.length) {
@@ -294,6 +314,7 @@ void fusionDemo() {
 ```
 
 ### Hoisting Invariant Computations
+
 ```d
 import std.math : sqrt;
 
@@ -306,6 +327,7 @@ void hoistDemo(float[] arr) {
 ```
 
 ### Strength Reduction
+
 ```d
 void strengthReduction(const int[] arr, int[] outArr) {
     foreach (i; 0 .. arr.length) {
@@ -321,6 +343,7 @@ void strengthDemo() {
 ```
 
 ### Unroll Hint via Static Foreach
+
 ```d
 float unrolledSum(float a, float b, float c, float d) {
     float acc = 0.0f;
@@ -334,6 +357,7 @@ void unrollDemo() {
 ```
 
 ### Auto-Vectorization Friendly Loop
+
 ```d
 void vecFriendlyLoop(float[] a, const float[] b, const float[] c) {
     foreach (i; 0 .. a.length) {
@@ -354,6 +378,7 @@ void vecDemo() {
 Marking data as `const` or `immutable` enables the compiler to perform alias analysis and more aggressive optimizations, since it guarantees data won't change.
 
 ### Const Parameters Enable Aliasing Analysis
+
 ```d
 int sumConstRange(const int[] arr) {
     int total = 0;
@@ -367,6 +392,7 @@ void constParamDemo() {
 ```
 
 ### Immutable Data in Hot Paths
+
 ```d
 immutable float[4] lut = [0.0f, 0.25f, 0.5f, 0.75f];  // Read-only lookup
 
@@ -380,6 +406,7 @@ void immutDemo() {
 ```
 
 ### Const Locals Help CSE
+
 ```d
 import std.math : sin;
 
@@ -396,6 +423,7 @@ void constLocalDemo(float[] outArr) {
 Smart allocation reduces GC pressure and improves data locality.
 
 ### Pre-Allocated Stack Arrays
+
 ```d
 void stackAllocDemo() {
     float[256] buffer;           // Stack allocation, no GC
@@ -404,6 +432,7 @@ void stackAllocDemo() {
 ```
 
 ### Pre-size Dynamic Arrays
+
 ```d
 void preSizeDemo() {
     int[] arr;
@@ -413,6 +442,7 @@ void preSizeDemo() {
 ```
 
 ### Reuse Buffers
+
 ```d
 void reuseBuffer(float[] buffer, size_t n) {
     buffer.length = n;            // No alloc if capacity >= n
@@ -427,6 +457,7 @@ void reuseDemo() {
 ```
 
 ### Stack Class via scope
+
 ```d
 class TempCalc {
     int value;
@@ -445,6 +476,7 @@ void scopeClassDemo() {
 D arrays are bounds-checked by default. Several techniques eliminate checks in hot loops while preserving safety elsewhere.
 
 ### Pointer Arithmetic Bypasses Bounds Checks
+
 ```d
 void ptrLoopDemo(const float[] src, float[] dst) {
     auto s = src.ptr;
@@ -456,6 +488,7 @@ void ptrLoopDemo(const float[] src, float[] dst) {
 ```
 
 ### Compile-Time Assert for Safe Offsets
+
 ```d
 void knownSize(const float[64] arr) {
     float sum = 0.0f;
@@ -471,6 +504,7 @@ void knownSizeDemo() {
 ```
 
 ### LDC Assume In-Bounds
+
 ```d
 import ldc.attributes : assumeUsed;
 
@@ -493,6 +527,7 @@ void fastLoopDemo() {
 LDC provides extensive optimization flags for production builds. These are not D code — they are command-line arguments passed to the compiler.
 
 ### Basic Optimization Levels
+
 ```
 -O0          No optimization (fast compile, slow code)
 -O1          Basic optimizations
@@ -503,6 +538,7 @@ LDC provides extensive optimization flags for production builds. These are not D
 ```
 
 ### Floating Point Optimization
+
 ```
 --ffast-math        Enable aggressive FP optimizations (may break IEEE compliance)
 --fno-fast-math     Disable fast-math (IEEE 754 compliant, default)
@@ -510,6 +546,7 @@ LDC provides extensive optimization flags for production builds. These are not D
 ```
 
 ### Target-Specific Optimizations
+
 ```
 -mcpu=native        Target current CPU (enables all ISA extensions)
 -mcpu=core2         Target specific microarchitecture
@@ -518,11 +555,13 @@ LDC provides extensive optimization flags for production builds. These are not D
 ```
 
 ### Recommended Release Flags
+
 ```
 ldc2 -O3 -release -boundscheck=off -mcpu=native -flto=thin source.d
 ```
 
 ### Diagnostics and Analysis
+
 ```
 --print-before-llvm-optimization  Print IR before optimization passes
 --print-after-llvm-optimization   Print IR after optimization passes
@@ -536,6 +575,7 @@ ldc2 -O3 -release -boundscheck=off -mcpu=native -flto=thin source.d
 PGO is a two-phase compilation process that uses runtime profiling data to guide optimizations. It improves branch prediction, inlining decisions, and code layout.
 
 ### Instrumented Build (Phase 1)
+
 ```
 # Compile with instrumentation
 ldc2 -fprofile-instr-generate -O2 source.d -o=program-instr
@@ -546,18 +586,21 @@ ldc2 -fprofile-instr-generate -O2 source.d -o=program-instr
 ```
 
 ### Merge Profile Data
+
 ```
 # Convert raw profile to processed format
 ldc-profdata merge -output=program.profdata default.profraw
 ```
 
 ### Optimized Build (Phase 2)
+
 ```
 # Compile using the collected profile data
 ldc2 -fprofile-instr-use=program.profdata -O3 -release source.d -o=program-opt
 ```
 
 ### PGO with Multiple Runs
+
 ```
 # Collect multiple profiles
 LLVM_PROFILE_FILE="run1.profraw" ./program-instr workload1
@@ -571,6 +614,7 @@ ldc2 -fprofile-instr-use=program.profdata -O3 source.d -o=program-opt
 ```
 
 ### Environment Variables for PGO
+
 ```
 LLVM_PROFILE_FILE="%p_%m.profraw"   # %p=pid, %m=sig for multi-process
 ```
@@ -580,6 +624,7 @@ LLVM_PROFILE_FILE="%p_%m.profraw"   # %p=pid, %m=sig for multi-process
 LTO enables cross-module optimizations by deferring code generation to link time. LDC supports both full and thin LTO.
 
 ### Thin LTO (Recommended)
+
 ```
 # Compile to LLVM bitcode, link with thin LTO
 ldc2 -flto=thin -O2 -c module_a.d
@@ -588,18 +633,21 @@ ldc2 -flto=thin -O2 module_a.o module_b.o -o=program
 ```
 
 ### Full LTO
+
 ```
 # Full LTO merges all IR into a single module (higher memory, more optimization)
 ldc2 -flto=full -O3 -release source.d -o=program
 ```
 
 ### LTO with PGO
+
 ```
 # Combine PGO and LTO for maximum optimization
 ldc2 -flto=thin -fprofile-instr-use=program.profdata -O3 source.d -o=program
 ```
 
 ### Checking LTO Effectiveness
+
 ```
 # List symbols to verify cross-module inlining occurred
 nm program | grep -c ' T '   # Count defined text symbols

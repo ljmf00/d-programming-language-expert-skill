@@ -16,6 +16,7 @@ metadata:
 Comprehensive guide to D's core language features: syntax, types, control flow, functions, and object-oriented programming.
 
 ## Table of Contents
+
 - [Basic Structure](#basic-structure)
 - [Types and Variables](#types-and-variables)
 - [Control Flow](#control-flow)
@@ -61,6 +62,7 @@ Comprehensive guide to D's core language features: syntax, types, control flow, 
 ## Basic Structure
 
 ### Hello World
+
 ```d
 module myapp;  // Module name matches file name
 
@@ -72,6 +74,7 @@ void main() {
 ```
 
 ### Module Structure
+
 ```d
 module my_package.my_module;
 
@@ -95,6 +98,7 @@ unittest {
 ## Types and Variables
 
 ### Primitive Types
+
 ```d
 // Boolean
 bool flag = true;
@@ -129,6 +133,7 @@ int* p = null;    // null pointer
 ```
 
 ### Type Modifiers
+
 ```d
 // const: read-only view (mutable underlying data can be modified through other references)
 const int x = 5;
@@ -149,6 +154,7 @@ inout(int)[] slice(inout(int)[] arr) {
 ```
 
 ### Variable Declarations
+
 ```d
 import std.stdio;
 
@@ -173,6 +179,7 @@ void main() {
 ```
 
 ### Arrays
+
 ```d
 // Static arrays (size known at compile time)
 int[5] staticArr = [1, 2, 3, 4, 5];
@@ -196,6 +203,7 @@ int[string] map = ["a": 1, "b": 2, "c": 3];
 ```
 
 ### Slices
+
 ```d
 // Slice syntax: array[start .. end]
 int[10] data = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -213,6 +221,7 @@ a ~= 6;                          // append: [1, 2, 3, 6]
 ## Control Flow
 
 ### if/else
+
 ```d
 import std.stdio;
 
@@ -234,6 +243,7 @@ void main() {
 ```
 
 ### switch
+
 ```d
 void main() {
     int value = 2;
@@ -254,6 +264,7 @@ void main() {
 ```
 
 ### while
+
 ```d
 void main() {
     int i = 0;
@@ -270,6 +281,7 @@ void main() {
 ```
 
 ### for
+
 ```d
 import std.stdio;
 
@@ -316,6 +328,7 @@ void main() {
 ```
 
 ### foreach with ref
+
 ```d
 void main() {
     int[] arr = [1, 2, 3];
@@ -327,6 +340,7 @@ void main() {
 ```
 
 ### break and continue
+
 ```d
 import std.stdio;
 
@@ -351,6 +365,7 @@ void main() {
 ## Functions
 
 ### Basic Function
+
 ```d
 // Basic function
 int add(int a, int b) {
@@ -370,6 +385,7 @@ void main() {
 ```
 
 ### Function Attributes
+
 ```d
 // pure: no side effects, same input always gives same output
 int pureFunction(int x) pure {
@@ -412,6 +428,7 @@ auto inferred(int x) {
 ```
 
 ### auto ref: Forwarding References
+
 ```d
 // auto ref: becomes ref if argument is an lvalue, value otherwise
 auto ref autoRefFunc()(auto ref int x) {
@@ -424,6 +441,7 @@ auto c = autoRefFunc(42);  // c is int (rvalue)
 ```
 
 ### `inout` Function Parameters
+
 ```d
 // inout: propagate qualifiers (const/immutable/mutable) through function
 inout(int)[] slice(inout(int)[] arr, size_t start, size_t end) {
@@ -434,7 +452,7 @@ void main() {
     int[] mutableArr = [1, 2, 3, 4, 5];
     const(int)[] constArr = [1, 2, 3, 4, 5];
     immutable(int)[] immArr = [1, 2, 3, 4, 5];
-    
+
     auto s1 = slice(mutableArr, 1, 3);  // int[]
     auto s2 = slice(constArr, 1, 3);    // const(int)[]
     auto s3 = slice(immArr, 1, 3);      // immutable(int)[]
@@ -442,6 +460,7 @@ void main() {
 ```
 
 ### Parameter Types
+
 ```d
 // in: read-only input (copy for structs, reference for classes)
 void processIn(in int x) {
@@ -475,6 +494,7 @@ int sum(int[] values...) {
 ```
 
 ### Function Overloading
+
 ```d
 void greet(string name) {
     writeln("Hello, ", name);
@@ -490,6 +510,7 @@ void greet(string first, string last) {
 ```
 
 ### Overload Resolution
+
 ```d
 // More specific overload is chosen
 void process(int x) {
@@ -505,6 +526,7 @@ process(42L);     // Calls process(long)
 ```
 
 ### Closures and Delegates
+
 ```d
 // Delegate: function with closure
 int makeAdder(int n) {
@@ -526,14 +548,15 @@ auto increment = () {
 ```
 
 ### Nested Functions
+
 ```d
 void outer() {
     int x = 10;
-    
+
     void inner() {
         writeln(x);  // Can access outer's variables
     }
-    
+
     inner();
 }
 ```
@@ -541,6 +564,7 @@ void outer() {
 ## Modules and Packages
 
 ### Module Declaration
+
 ```d
 // File: my_package/my_module.d
 module my_package.my_module;
@@ -557,6 +581,7 @@ void privateFunction() {
 ```
 
 ### Import Styles
+
 ```d
 // Specific imports (preferred)
 import std.algorithm : filter, map, reduce;
@@ -573,6 +598,7 @@ private import std.string;
 ```
 
 ### Package Structure
+
 ```
 my_package/
 ├── source/
@@ -590,22 +616,23 @@ my_package/
 ## Classes and Structs
 
 ### Struct (Value Type)
+
 ```d
 struct Point {
     double x, y;
-    
+
     // Constructor
     this(double x, double y) {
         this.x = x;
         this.y = y;
     }
-    
+
     // Method
     double distance(Point other) const {
         import std.math : sqrt, pow;
         return sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
     }
-    
+
     // Operator overloading
     Point opBinary(string op)(Point other) const if (op == "+") {
         return Point(x + other.x, y + other.y);
@@ -621,20 +648,21 @@ void main() {
 ```
 
 ### Class (Reference Type)
+
 ```d
 class Animal {
     string name;
     int age;
-    
+
     this(string name, int age) {
         this.name = name;
         this.age = age;
     }
-    
+
     string speak() {
         return "...";
     }
-    
+
     ~this() {
         // Destructor (called by GC)
     }
@@ -644,7 +672,7 @@ class Dog : Animal {
     this(string name, int age) {
         super(name, age);
     }
-    
+
     override string speak() {
         return "Woof!";
     }
@@ -657,6 +685,7 @@ void main() {
 ```
 
 ### Class Features
+
 ```d
 class MyClass {
     // Static members
@@ -664,21 +693,21 @@ class MyClass {
     static void staticMethod() {
         // Can only access static members
     }
-    
+
     // Instance members
     int instanceVar;
-    
+
     void instanceMethod() {
         // Can access both static and instance members
     }
-    
+
     // Properties (getters/setters)
     private int _value;
-    
+
     @property int value() const {
         return _value;
     }
-    
+
     @property void value(int v) {
         _value = v;
     }
@@ -686,10 +715,11 @@ class MyClass {
 ```
 
 ### Copy Constructor
+
 ```d
 struct Copyable {
     int[] data;
-    
+
     this(this) {
         // Postblit / copy constructor - called on copy
         data = data.dup;
@@ -700,6 +730,7 @@ struct Copyable {
 ## Interfaces
 
 ### Basic Interface
+
 ```d
 import std.stdio;
 
@@ -714,20 +745,20 @@ interface Resizable {
 
 class Circle : Drawable, Resizable {
     double radius;
-    
+
     this(double radius) {
         this.radius = radius;
     }
-    
+
     void draw() {
         writeln("Drawing circle with radius ", radius);
     }
-    
+
     double area() const {
         import std.math : PI;
         return PI * radius * radius;
     }
-    
+
     void resize(double factor) {
         radius *= factor;
     }
@@ -735,6 +766,7 @@ class Circle : Drawable, Resizable {
 ```
 
 ### Interface Implementation
+
 ```d
 // Multiple interface inheritance
 interface A {
@@ -754,6 +786,7 @@ class C : B {
 ## Enums and Unions
 
 ### Enum
+
 ```d
 // Basic enum
 enum Color { RED, GREEN, BLUE }
@@ -786,6 +819,7 @@ void main() {
 ```
 
 ### Union
+
 ```d
 union Data {
     int i;
@@ -803,6 +837,7 @@ void main() {
 ## Delegates and Function Pointers
 
 ### Function Pointers
+
 ```d
 import std.stdio;
 
@@ -819,6 +854,7 @@ void main() {
 ```
 
 ### Delegates (Closures)
+
 ```d
 // Delegate type
 int delegate(int) del;
@@ -834,18 +870,19 @@ writeln(del(5));  // 15
 ## Operator Overloading
 
 ### Binary Operators
+
 ```d
 struct Vector2 {
     double x, y;
-    
+
     Vector2 opBinary(string op)(Vector2 other) if (op == "+") {
         return Vector2(x + other.x, y + other.y);
     }
-    
+
     Vector2 opBinary(string op)(Vector2 other) if (op == "-") {
         return Vector2(x - other.x, y - other.y);
     }
-    
+
     Vector2 opBinary(string op)(double scalar) if (op == "*") {
         return Vector2(x * scalar, y * scalar);
     }
@@ -853,10 +890,11 @@ struct Vector2 {
 ```
 
 ### Comparison Operators
+
 ```d
 struct Point {
     double x, y;
-    
+
     int opCmp(ref const Point other) const {
         if (x != other.x) return (x < other.x) ? -1 : 1;
         if (y != other.y) return (y < other.y) ? -1 : 1;
@@ -867,18 +905,19 @@ struct Point {
 ```
 
 ### Indexing
+
 ```d
 struct Container {
     int[10] data;
-    
+
     ref int opIndex(size_t i) {
         return data[i];
     }
-    
+
     int opIndex(size_t i) const {
         return data[i];
     }
-    
+
     void opIndexAssign(int value, size_t i) {
         data[i] = value;
     }
@@ -888,6 +927,7 @@ struct Container {
 ## Conditional Compilation
 
 ### version Statement
+
 ```d
 // Version identifiers:
 // D version
@@ -913,6 +953,7 @@ version (A) {} else version (B) {} else {}
 ```
 
 ### debug Statement
+
 ```d
 // Debug block: compiled only with -debug flag
 debug {
@@ -931,6 +972,7 @@ debug (MyModule) {
 ```
 
 ### static if
+
 ```d
 // Compile-time conditional
 static if (is(T == int)) {
@@ -955,6 +997,7 @@ static foreach (T; Types) {
 ## `__traits` - Compile-Time Reflection
 
 ### Basic Usage
+
 ```d
 static assert(__traits(isSame, int, int));             // true
 static assert(__traits(compiles, 1 + 2));               // true
@@ -962,6 +1005,7 @@ static assert(__traits(compiles, (string s) => s.length));  // true
 ```
 
 ### Commonly Used Traits
+
 ```d
 import std.traits;
 
@@ -973,6 +1017,7 @@ static assert(!__traits(isSame, int, long));                // Are int and long 
 ```
 
 ### initSymbol Example
+
 ```d
 // Bind a C symbol at compile-time
 extern(C) __gshared int errno;
@@ -982,6 +1027,7 @@ static int* errno_ptr = &errno;  // Captures at compile-time
 ## `is` Expression - Type Checking
 
 ### Forms of `is`
+
 ```d
 alias T = int;
 
@@ -1005,6 +1051,7 @@ static if (is(T : int)) { }              // T implicitly converts to int
 ```
 
 ### Practical `is` Examples
+
 ```d
 bool isPointer(T)() { return is(T == U*, U); }
 bool isArray(T)() { return is(T == U[], U); }
@@ -1016,6 +1063,7 @@ static if (is(typeof(T.init.foo))) { }  // T has member foo
 ## `typeof` and `typeid`
 
 ### typeof
+
 ```d
 // typeof: get the type of an expression
 int x = 42;
@@ -1033,6 +1081,7 @@ int func() {
 ```
 
 ### typeid
+
 ```d
 import std.stdio;
 import core.demangle;
@@ -1055,6 +1104,7 @@ void main() {
 ## `alias` and `with`
 
 ### alias
+
 ```d
 // Type alias
 alias MyInt = int;
@@ -1067,7 +1117,7 @@ alias AddFun(T) = T function(T, T);
 struct Point {
     private double[2] p;
     alias p this;           // Point behaves like a double[2]
-    
+
     double dot(Point rhs) {
         return p[0] * rhs.p[0] + p[1] * rhs.p[1];
     }
@@ -1075,6 +1125,7 @@ struct Point {
 ```
 
 ### with
+
 ```d
 import std.stdio;
 
@@ -1085,12 +1136,12 @@ struct S {
 
 void main() {
     auto s = S(10, 20);
-    
+
     with (s) {
         x += 1;  // Equivalent to s.x += 1
         y += 1;  // Equivalent to s.y += 1
     }
-    
+
     // with for members lookup
     with (std.stdio) {
         writeln("Hello");  // No need to qualify
@@ -1101,6 +1152,7 @@ void main() {
 ## Error Handling
 
 ### try/catch/finally
+
 ```d
 import std.stdio;
 
@@ -1120,6 +1172,7 @@ void main() {
 ```
 
 ### Throwable Hierarchy
+
 ```d
 // Top hierarchy:
 // Object
@@ -1137,6 +1190,7 @@ class MyException : Exception {
 ```
 
 ### scope Guards
+
 ```d
 import std.stdio;
 
@@ -1150,6 +1204,7 @@ void main() {
 ```
 
 ### enforce
+
 ```d
 import std.exception : enforce;
 
@@ -1162,6 +1217,7 @@ void process(string data) {
 ## Properties
 
 ### Built-in Type Properties
+
 ```d
 // Every type has these properties
 int initVal = int.init;      // Initial value: 0
@@ -1177,6 +1233,7 @@ int[10] arr;
 ## Pragmas
 
 ### pragma(msg): Compile-Time Print
+
 ```d
 pragma(msg, "Compiling module: ", __MODULE__);
 pragma(msg, "Debug mode: ", "On");
@@ -1184,6 +1241,7 @@ pragma(msg, "Debug mode: ", "On");
 ```
 
 ### pragma(inline): Inline Control
+
 ```d
 pragma(inline, true)   int func1() { return 1; }  // Force inline
 pragma(inline, false)  int func2() { return 2; }  // Prevent inline
@@ -1191,6 +1249,7 @@ pragma(inline, false)  int func2() { return 2; }  // Prevent inline
 ```
 
 ### Other Pragmas
+
 ```d
 pragma(lib, "somelib");      // Link with library
 pragma(startaddress, main);   // Set entry point
@@ -1200,6 +1259,7 @@ pragma(mangle, "MyFunc");     // Override mangled name
 ## User-Defined Attributes (UDA)
 
 ### Defining and Using UDAs
+
 ```d
 // UDA is just a type used as an attribute
 struct Author {
@@ -1288,6 +1348,7 @@ extern(C) void main() {
 ```
 
 ### Limitations in Better C
+
 ```d
 // Not available in -betterC:
 // - Garbage collection
@@ -1311,6 +1372,7 @@ extern(C) void main() {
 ## Inline Assembler
 
 ### x86/x86_64 Inline Assembler
+
 ```d
 version (D_InlineAsm_X86) {
     uint checkedMultiply(uint x, uint y) {
@@ -1339,6 +1401,7 @@ version(DigitalMars) {
 ```
 
 ### Inline Assembler Syntax
+
 ```d
 /*
 asm {
@@ -1360,10 +1423,10 @@ Operand syntax:
 void vectorExample() {
     int4 a = [1, 2, 3, 4];       // 4 ints in one vector
     int4 b = [5, 6, 7, 8];
-    
+
     int4 c = a + b;               // Element-wise add
     int4 d = a * b;               // Element-wise multiply
-    
+
     // Access elements
     int first = a[0];
     a[0] = 10;
@@ -1376,6 +1439,7 @@ import core.simd;
 ## Interfacing to C
 
 ### extern(C) Declarations
+
 ```d
 // Call C functions directly
 extern(C) {
@@ -1390,6 +1454,7 @@ void main() {
 ```
 
 ### C struct Compatibility
+
 ```d
 extern(C) struct Point {
     int x;
@@ -1404,6 +1469,7 @@ align(1) struct Packed {
 ```
 
 ### Import C Headers (ImportC)
+
 ```d
 // DMD can compile C source directly
 // import "file.c"
@@ -1418,6 +1484,7 @@ align(1) struct Packed {
 ## Interfacing to C++
 
 ### extern(C++) Declarations
+
 ```d
 // Link with C++ code
 extern(C++) {
@@ -1429,6 +1496,7 @@ extern(C++) {
 ```
 
 ### C++ Name Mangling
+
 ```d
 // C++ function linkage (requires LDC with C++ interop support)
 extern(C++) void cppFunc();
@@ -1452,10 +1520,10 @@ void main() {
     int x = 10;            // x is an lvalue
     x = 20;                // OK: lvalue can be assigned to
     // 10 = 20;            // Error: 10 is an rvalue
-    
+
     int* p = &x;           // OK: x is lvalue, can take address
     // int* p2 = &10;      // Error: 10 is rvalue, cannot take address
-    
+
     int y;
     int* q = &(x = y);     // Assignment is lvalue in D
 }
@@ -1586,7 +1654,7 @@ import std.bitmanip;
 struct Flags {
     mixin(bitfields!(
         uint, "readOnly", 1,      // 1 bit
-        uint, "hidden", 1,        // 1 bit  
+        uint, "hidden", 1,        // 1 bit
         uint, "type", 2,          // 2 bits
         uint, "unused", 4,        // 4 bits
     ));
@@ -1616,6 +1684,7 @@ static ~this() {
 ```
 
 ## Attributes
+
 ```d
 // @safe: memory-safe code
 int safeFunction() @safe {
@@ -1636,6 +1705,7 @@ int trustedFunction() @trusted {
 ```
 
 ### Other Attributes
+
 ```d
 // @property: marks getter/setter
 struct Widget {
@@ -1669,6 +1739,7 @@ int safeFunction() nothrow {
 ## Quick Reference
 
 ### Type Quick Reference
+
 ```d
 // Integer types: byte, ubyte, short, ushort, int, uint, long, ulong
 // Floating point: float, double, real
@@ -1679,6 +1750,7 @@ int safeFunction() nothrow {
 ```
 
 ### Function Attribute Quick Reference
+
 ```d
 // pure     - No side effects
 // nothrow  - No exceptions
@@ -1692,6 +1764,7 @@ int safeFunction() nothrow {
 ```
 
 ### Control Flow Quick Reference
+
 ```d
 void main() {
     int val;
@@ -1707,6 +1780,7 @@ void main() {
 ```
 
 ### Array Operations Quick Reference
+
 ```d
 import std.stdio;
 
@@ -1721,6 +1795,7 @@ void main() {
 ```
 
 ### Special Types Quick Reference
+
 ```d
 // void   - No type (function return)
 // noreturn - Never returns (DIP 1034)
@@ -1728,6 +1803,7 @@ void main() {
 ```
 
 ### Compile-Time Quick Reference
+
 ```d
 // Static if, version, debug — all must be inside a function or at module scope
 // Traits and is expressions need types/values to operate on
@@ -1745,6 +1821,7 @@ static assert(is(T == int));
 ## Common Idioms
 
 ### Empty Check
+
 ```d
 void check(int[] arr) {
     if (arr.length == 0) { }  // Preferred
@@ -1753,6 +1830,7 @@ void check(int[] arr) {
 ```
 
 ### Swap
+
 ```d
 import std.algorithm.mutation : swap;
 
@@ -1763,6 +1841,7 @@ void main() {
 ```
 
 ### Range Iteration
+
 ```
 foreach (i; 0 .. arr.length) { }           // Index
 foreach (elem; arr) { }                     // Element
@@ -1771,6 +1850,7 @@ foreach (ref elem; arr) { }                 // Mutable element
 ```
 
 ### Function Chaining
+
 ```d
 import std.algorithm : map, filter, reduce;
 import std.range : iota;
@@ -1782,6 +1862,7 @@ auto result = iota(1, 101)
 ```
 
 ## References
+
 - [D Language Specification](https://dlang.org/spec/spec.html)
 - [D Style Guide](https://dlang.org/dstyle.html)
 - [D Tour](https://tour.dlang.org)

@@ -16,6 +16,7 @@ metadata:
 Comprehensive guide to D's testing infrastructure, contract programming, DDoc documentation system, and embedded code examples.
 
 ## Table of Contents
+
 - [Unittest Blocks](#unittest-blocks)
 - [Unittest with Setup/Teardown](#unittest-with-setup-teardown)
 - [Unittest with Imports](#unittest-with-imports)
@@ -34,7 +35,7 @@ Comprehensive guide to D's testing infrastructure, contract programming, DDoc do
 - [DDoc Macros: D, I, B](#ddoc-macros-d-i-b)
 - [DDoc Macros: REF and LINK2](#ddoc-macros-ref-and-link2)
 - [DDoc Sections and Subrefs](#ddoc-sections-and-subrefs)
-- [DDoc DDOC_ Macros](#ddoc-ddoc_-macros)
+- [DDoc DDOC\_ Macros](#ddoc-ddoc_-macros)
 - [Embedded Code Examples](#embedded-code-examples)
 - [Doctest Extraction](#doctest-extraction)
 - [Testing Best Practices](#testing-best-practices)
@@ -504,7 +505,7 @@ int utilityAdd(int a, int b) {
 }
 ```
 
-## DDoc DDOC_ Macros
+## DDoc DDOC\_ Macros
 
 ### DDoc Conditional Macros
 
@@ -598,12 +599,12 @@ import std.stdio;
 
 struct SafeArray {
     int[] data;
-    
+
     void push(int value)
     in { assert(data.length < 1000); }
     out { assert(data[$ - 1] == value); }
     do { data ~= value; }
-    
+
     int pop()
     in { assert(data.length > 0, "Cannot pop from empty array"); }
     out (result) { assert(result >= 0); }
@@ -631,22 +632,22 @@ import std.exception : enforce;
 
 class Stack {
     private int[] _items;
-    
+
     void push(int item) {
         _items ~= item;
     }
-    
+
     int pop() {
         enforce(_items.length > 0, "Stack is empty");
         auto val = _items[$ - 1];
         _items.length--;
         return val;
     }
-    
+
     bool empty() const @property {
         return _items.length == 0;
     }
-    
+
     invariant() {
         assert(_items.length >= 0);
     }
@@ -712,7 +713,7 @@ dmd -D -Df=output.html mymodule.d
 // Contract syntax quick reference
 // Pre-condition (input validation)
 //   in { assert(...); }
-// Post-condition (output validation)  
+// Post-condition (output validation)
 //   out (result) { assert(...); }
 //   out { assert(...); }  // no result capture
 // Body
@@ -722,6 +723,7 @@ dmd -D -Df=output.html mymodule.d
 ```
 
 ## References
+
 - [D Language Specification - Unit Tests](https://dlang.org/spec/module.html#unittests)
 - [D Language Specification - Contracts](https://dlang.org/spec/function.html#contract-programming)
 - [DDoc Documentation](https://dlang.org/spec/ddoc.html)

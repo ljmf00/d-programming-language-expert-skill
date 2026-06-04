@@ -3,7 +3,8 @@ name: d-lang-memory
 description: >-
   D memory management and safety: GC, RAII, scope, @safe/@trusted/@system,
   const/immutable/shared, copy constructors (DIP 1018), move semantics
-  (DIP 1014), @live ownership system, destructors.
+  (DIP 1040 move constructors, DIP 1014 opPostMove), @live ownership system,
+  destructors.
   Use when optimizing memory or ensuring memory safety.
 license: MIT
 metadata:
@@ -24,7 +25,7 @@ Comprehensive guide to D's memory management: garbage collection, RAII, memory s
 - [shared Keyword](#shared-keyword)
 - [Copy Constructor (DIP 1018)](#copy-constructor-dip-1018)
 - [Postblit vs Copy Constructor](#postblit-vs-copy-constructor)
-- [Move Semantics (DIP 1014)](#move-semantics-dip-1014)
+- [Move Semantics (DIP 1040)](#move-semantics-dip-1040)
 - [core.memory (GC API) Detailed](#corememory-gc-api-detailed)
 - [Reference Counting](#reference-counting)
 - [`@system` Variables (DIP 1035)](#@system-variables-dip-1035)
@@ -451,27 +452,29 @@ void manualAllocation() {
 }
 ```
 
-### new/delete with Custom Allocator
+### Custom Allocation with std.experimental.allocator
+
+Class-level `new`/`delete` overloads (`opNew`/`opDelete`) and the `delete`
+keyword were **removed** from the language. To allocate outside the GC, use
+`std.experimental.allocator` (or `core.stdc.stdlib` directly):
 
 ```d
+import std.experimental.allocator : make, dispose;
+import std.experimental.allocator.mallocator : Mallocator;
+
 class MyClass {
     int data;
 
     this(int d) {
         data = d;
     }
+}
 
-    // Override new/delete for custom allocation
-    static void* opNew(size_t size, in char[] file = __FILE__,
-                       uint line = __LINE__) {
-        import core.stdc.stdlib : malloc;
-        return malloc(size);
-    }
-
-    static void opDelete(void* p) {
-        import core.stdc.stdlib : free;
-        free(p);
-    }
+void customAllocation() {
+    // make!T constructs on the chosen allocator; dispose runs the destructor
+    // and frees the memory.
+    auto obj = Mallocator.instance.make!MyClass(42);
+    scope(exit) Mallocator.instance.dispose(obj);
 }
 ```
 
@@ -496,20 +499,17 @@ void stackAllocation() {
 struct Data {
     int[] buffer;
 
-    // Copy constructor (DIP 1018)
+    // Copy constructor (DIP 1018): parameter is taken by `ref`.
     this(ref return scope const typeof(this) other) {
         this.buffer = new int[other.buffer.length];
         this.buffer[] = other.buffer[];
     }
-
-    // Move constructor
-    this(ref typeof(this) other) {
-        // Efficiently transfer ownership
-        this.buffer = other.buffer;
-        other.buffer = null;
-    }
 }
 ```
+
+> A `this(ref S)` constructor is a **copy** constructor, not a move constructor.
+> A move constructor takes its parameter **by value** (`this(S)`) — see
+> [Move Semantics](#move-semantics-dip-1040) below.
 
 ## Postblit vs Copy Constructor
 
@@ -531,31 +531,44 @@ struct NewStyle {
 }
 ```
 
-## Move Semantics (DIP 1014)
+## Move Semantics (DIP 1040)
+
+A **move constructor** takes its own type **by value** — `this(S)` — so it binds
+to rvalues and ends the source's lifetime (DIP 1040, DMD 2.111+/LDC 1.41+). This
+is distinct from the by-`ref` copy constructor and from the legacy DIP 1014
+`opPostMove` blit-fixup hook. Application code normally uses
+[`core.lifetime.move`](https://dlang.org/phobos/core_lifetime.html#.move) rather
+than the `__rvalue(...)` primitive directly.
 
 ```d
-struct Movable {
+import core.lifetime : move;
+
+// Move-only type: copying disabled, transfer via a by-value move constructor.
+struct Buffer {
     int[] data;
 
-    // Move constructor: transfers ownership
-    this(ref typeof(this) other) {
-        this.data = other.data;
-        other.data = null;  // Source is emptied
+    this(int[] d) {
+        data = d;
     }
 
-    // Prevent copying
-    @disable this(this);  // Disable postblit
+    // Move constructor (by value) — NOT `this(ref Buffer)`, which is a copy ctor.
+    this(Buffer rhs) {
+        data = rhs.data;
+        rhs.data = null;  // leave the source benign for its own destructor
+    }
 
-    // Disable copy construction (if using DIP 1018)
-    @disable this(ref return scope const typeof(this));
+    @disable this(ref Buffer);  // no copying
 }
 
 void main() {
-    auto src = Movable([1, 2, 3]);
-    auto dst = move(src);  // Move: src.data is now null
-    // src is in a valid but empty state
+    auto src = Buffer([1, 2, 3]);
+    auto dst = move(src);  // destructive move: src.data is now null
+    // auto copy = dst;    // error: copy construction is @disabled
 }
 ```
+
+> `__rvalue(x)` forces an lvalue to be treated as an rvalue (D's `std::move`
+> analogue) and is `@system`; prefer `core.lifetime.move`, which infers safety.
 
 ## core.memory (GC API) Detailed
 
@@ -589,8 +602,12 @@ GC.BlkAttr.APPENDABLE          // Allows appending
 
 ### Manual Reference Counting
 
+Reference counting needs value semantics, so it is a **struct** (a class is a GC
+reference and cannot have a postblit or copy constructor). Use a copy constructor
+to bump the count and the destructor to drop it — there is no `delete` keyword:
+
 ```d
-class RefCounted(T) {
+struct RefCounted(T) {
     private T* ptr;
     private int* refCount;
 
@@ -599,18 +616,23 @@ class RefCounted(T) {
         refCount = new int(1);
     }
 
-    this(this) {  // Increment on copy
+    // Copy constructor (DIP 1018): increment on copy.
+    this(ref return scope const RefCounted other) {
+        ptr = cast(T*) other.ptr;
+        refCount = cast(int*) other.refCount;
         if (refCount) (*refCount)++;
     }
 
     ~this() {  // Decrement on destroy
         if (refCount && --(*refCount) == 0) {
-            delete ptr;
-            delete refCount;
+            // Drop our references; the GC reclaims the blocks (or call
+            // destroy()/the allocator's dispose for non-GC storage).
+            ptr = null;
+            refCount = null;
         }
     }
 
-    T opUnary(string op)() if (op == "*") {
+    ref T get() {
         return *ptr;
     }
 }
@@ -789,11 +811,12 @@ void gcApiExample() {
 ### Lifecycle Functions
 
 ```d
-// this(T args)             Constructor
-// this(this)               Postblit (copy)
-// this(ref typeof(this))   Copy constructor (DIP 1018)
-// ~this()                  Destructor
-// opDestroy(T obj)         Explicit destroy
+// this(T args)                  Constructor
+// this(this)                    Postblit (legacy copy hook)
+// this(ref return scope const S) Copy constructor (DIP 1018)
+// this(S)                        Move constructor (DIP 1040, by value)
+// ~this()                        Destructor
+// destroy(obj)                   Explicit finalization (object.destroy)
 ```
 
 ## Common Idioms
@@ -860,7 +883,9 @@ void main() {
 - [SafeD Article](https://dlang.org/articles/safed.html)
 - [const FAQ](https://dlang.org/articles/const-faq.html)
 - [Memory Safety Specification](https://dlang.org/spec/memory-safe-d.html)
-- [DIP 1014 - Move Semantics](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1014.md)
+- [DIP 1014 - Hooking D's struct move semantics (`opPostMove`)](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1014.md)
 - [DIP 1018 - Copy Constructor](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1018.md)
+- [DIP 1040 - Copying, Moving, and Forwarding (move constructors)](https://github.com/dlang/DIPs/blob/master/DIPs/other/DIP1040.md)
+- [core.lifetime.move](https://dlang.org/phobos/core_lifetime.html#.move)
 - [DIP 1035 - @system Variables](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1035.md)
 - [D Language Specification](https://dlang.org/spec/)

@@ -34,20 +34,21 @@ metadata:
 Key DIPs and their current default/preview status. "Default" means enabled in
 current stable DMD and LDC. "Preview" requires an explicit flag.
 
-| DIP                                                                        | Title                       | Status                         | Compiler Flag              |
-| -------------------------------------------------------------------------- | --------------------------- | ------------------------------ | -------------------------- |
-| [1000](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1000.md) | Scoped Pointers             | Preview                        | `-preview=dip1000`         |
-| [1014](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1014.md) | Move Semantics              | Default                        | —                          |
-| [1018](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1018.md) | Copy Constructor            | Default                        | —                          |
-| [1029](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1029.md) | throw as Function Attribute | Default                        | —                          |
-| [1030](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1030.md) | Named Arguments             | Default                        | —                          |
-| [1034](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1034.md) | noreturn Bottom Type        | Default                        | —                          |
-| [1035](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1035.md) | @system Variables           | Preview                        | `-preview=systemVariables` |
-| [1038](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1038.md) | @mustuse                    | Default                        | —                          |
-| [1043](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1043.md) | Shortened Method Syntax     | Default                        | —                          |
-| [1048](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1048.md) | Language Bitfields          | Default (DMD 2.108+/LDC 1.36+) | —                          |
-| [1052](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1052.md) | Editions                    | In progress                    | —                          |
-| [1053](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1053.md) | Tuple Unpacking             | In progress                    | —                          |
+| DIP                                                                        | Title                              | Status                         | Compiler Flag              |
+| -------------------------------------------------------------------------- | ---------------------------------- | ------------------------------ | -------------------------- |
+| [1000](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1000.md) | Scoped Pointers                    | Preview                        | `-preview=dip1000`         |
+| [1014](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1014.md) | Hooking struct move (`opPostMove`) | Default                        | —                          |
+| [1018](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1018.md) | Copy Constructor                   | Default                        | —                          |
+| [1029](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1029.md) | throw as Function Attribute        | Default                        | —                          |
+| [1030](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1030.md) | Named Arguments                    | Default                        | —                          |
+| [1034](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1034.md) | noreturn Bottom Type               | Default                        | —                          |
+| [1035](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1035.md) | @system Variables                  | Preview                        | `-preview=systemVariables` |
+| [1038](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1038.md) | @mustuse                           | Default                        | —                          |
+| [1040](https://github.com/dlang/DIPs/blob/master/DIPs/other/DIP1040.md)    | Move constructors (`this(S)`)      | Default (DMD 2.111+/LDC 1.41+) | —                          |
+| [1043](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1043.md) | Shortened Method Syntax            | Default                        | —                          |
+| [1048](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1048.md) | Language Bitfields                 | Default (DMD 2.108+/LDC 1.36+) | —                          |
+| [1052](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1052.md) | Editions                           | In progress                    | —                          |
+| [1053](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1053.md) | Tuple Unpacking                    | In progress                    | —                          |
 
 ## DIP 1013: Deprecation Process
 
@@ -483,13 +484,14 @@ DIP 1000: scope pointers          → -preview=dip1000 (not default)
 DIP 1009: expression contracts    → in (a > 0) out (r; r >= 0) do { ... }
 DIP 1010: static foreach          → static foreach (i; 0 .. 5) { }
 DIP 1013: deprecation process     → deprecated("use newFunc instead")
-DIP 1014: move semantics          → move constructor: this(T t) if (...)
+DIP 1014: opPostMove hook         → opPostMove(ref T) blit-fixup hook
 DIP 1018: copy constructor        → this(ref return scope const T rhs)
 DIP 1029: throw attribute         → nothrow / throw (explicit)
 DIP 1030: named arguments         → configure(port: 8080, host: "x")
 DIP 1034: noreturn type           → noreturn neverReturns()
 DIP 1035: @system variables       → -preview=systemVariables (not default)
 DIP 1038: @mustuse                → @mustuse struct Result { ... }
+DIP 1040: move constructors       → this(S rhs) (by value); core.lifetime.move
 DIP 1043: shortened methods       → int add(int a, int b) => a + b
 DIP 1046: ref local variables     → ref int r = someVar; (not yet default)
 DIP 1048: language bitfields      → uint x:4; (DMD 2.108+, LDC 1.36+)

@@ -16,6 +16,7 @@ metadata:
 Comprehensive guide to async patterns, cooperative multitasking with fibers, coroutines, event loops, and non-blocking I/O in D without external frameworks.
 
 ## Table of Contents
+
 - [Fiber Fundamentals](#fiber-fundamentals)
 - [Fiber Lifecycle and State](#fiber-lifecycle-and-state)
 - [Fiber Scheduler Patterns](#fiber-scheduler-patterns)
@@ -32,6 +33,7 @@ Comprehensive guide to async patterns, cooperative multitasking with fibers, cor
 ## Fiber Fundamentals
 
 ### Creating a Fiber
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -47,6 +49,7 @@ f.call();  // Resumes after yield
 ```
 
 ### Fiber with Closure Capture
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -60,6 +63,7 @@ f2.call();
 ```
 
 ### Fiber Stack Size
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -74,6 +78,7 @@ f3.call();
 ## Fiber Lifecycle and State
 
 ### Fiber State Inspection
+
 ```d
 import core.thread : Fiber;
 
@@ -84,6 +89,7 @@ assert(f4.state == Fiber.State.HOLD);
 ```
 
 ### Fiber Termination Detection
+
 ```d
 import core.thread : Fiber;
 
@@ -97,6 +103,7 @@ assert(f5.state == Fiber.State.TERM);
 ```
 
 ### Fiber with Multiple Yields
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -111,6 +118,7 @@ f6.call(); f6.call(); f6.call();
 ```
 
 ### Fiber Exception Handling
+
 ```d
 import core.thread : Fiber;
 import std.exception : enforce;
@@ -130,6 +138,7 @@ f7.call();
 ## Fiber Scheduler Patterns
 
 ### Round-Robin Scheduler
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -152,6 +161,7 @@ foreach (i; 0 .. 2)
 ```
 
 ### Priority Fiber Scheduler
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -175,6 +185,7 @@ foreach (pt; prioTasks) pt.fb.call();
 ```
 
 ### Fiber Yield with Data
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -193,6 +204,7 @@ f8.call(); writeln("Got: ", producedVal);
 ```
 
 ### Fiber Pool Pattern
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -214,6 +226,7 @@ foreach (i; 0 .. 4) pool[i].call();
 ## Generator!T - Coroutine-Based Async
 
 ### Basic Generator
+
 ```d
 import std.concurrency : Generator, yield;
 import std.stdio;
@@ -230,6 +243,7 @@ foreach (val; gen1) {
 ```
 
 ### Generator with String Values
+
 ```d
 import std.concurrency : Generator, yield;
 import std.stdio;
@@ -246,6 +260,7 @@ foreach (line; gen2) {
 ```
 
 ### Infinite Generator (Lazy)
+
 ```d
 import std.concurrency : Generator, yield;
 import std.range : take;
@@ -263,6 +278,7 @@ auto firstFive = gen3.take(5).array;
 ```
 
 ### Generator as Async Pipeline Stage
+
 ```d
 import std.concurrency : Generator, yield;
 import std.stdio;
@@ -279,6 +295,7 @@ foreach (v; doubled) writeln(v);
 ## Advanced Generator Patterns
 
 ### Generator with Conditional Yield
+
 ```d
 import std.concurrency : Generator, yield;
 import std.stdio;
@@ -294,6 +311,7 @@ foreach (v; gen5) writeln("Cond: ", v);
 ```
 
 ### Nested Generator Composition
+
 ```d
 import std.concurrency : Generator, yield;
 import std.stdio;
@@ -311,6 +329,7 @@ foreach (v; combined) writeln(v);
 ```
 
 ### Generator Error Propagation
+
 ```d
 import std.concurrency : Generator, yield;
 import std.stdio;
@@ -328,6 +347,7 @@ foreach (msg; gen7) writeln(msg);
 ```
 
 ### Generator with Side Effects
+
 ```d
 import std.concurrency : Generator, yield;
 import std.stdio;
@@ -347,6 +367,7 @@ writeln("Side effects: ", sideEffectCount);
 ## Event Loop Implementation
 
 ### Simple Event Callback System
+
 ```d
 import std.stdio;
 
@@ -361,6 +382,7 @@ fireEvent(1, (int e) => writeln("Event fired: ", e));
 ```
 
 ### Event Registry Pattern
+
 ```d
 import std.stdio;
 import std.array;
@@ -380,6 +402,7 @@ dispatchEvent("hello");
 ```
 
 ### Event Loop with Queue
+
 ```d
 import std.stdio;
 import std.container : SList;
@@ -407,6 +430,7 @@ processEvents();
 ```
 
 ### Timed Event Loop
+
 ```d
 import std.stdio;
 import std.datetime.stopwatch : StopWatch;
@@ -431,6 +455,7 @@ checkTimedEvents();
 ```
 
 ### Event Dispatcher with Types
+
 ```d
 import std.stdio;
 import std.typecons : Nullable;
@@ -457,6 +482,7 @@ dispatch(EventType.keypress, 65);
 ## Timer Management
 
 ### Thread Sleep Timer
+
 ```d
 import core.thread : Thread;
 import std.datetime.stopwatch : StopWatch;
@@ -470,6 +496,7 @@ writeln("Slept: ", timerSw.peek().total!"msecs", "ms");
 ```
 
 ### Timer Callback Pattern
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -484,6 +511,7 @@ delayedAction();
 ```
 
 ### Repeated Timer
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -500,6 +528,7 @@ repeatedTimer(3);
 ```
 
 ### Timeout Pattern
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -517,6 +546,7 @@ writeln("Timeout: ", timeoutGuard(10));
 ## Non-Blocking I/O
 
 ### Non-Blocking Pipe (POSIX)
+
 ```d
 import std.stdio;
 
@@ -528,6 +558,7 @@ void nonBlockingIO() {
 ```
 
 ### Non-Blocking Read Check
+
 ```d
 version (linux) {
     import core.sys.posix.unistd : pipe, read, close;
@@ -546,6 +577,7 @@ version (linux) {
 ```
 
 ### Pipe Write and Read
+
 ```d
 version (linux) {
     import core.sys.posix.unistd : pipe, read, write, close;
@@ -565,6 +597,7 @@ version (linux) {
 ## POSIX Event Multiplexing
 
 ### select() for File Descriptor Monitoring
+
 ```d
 version (linux) {
     import core.sys.posix.sys.select;
@@ -584,6 +617,7 @@ version (linux) {
 ```
 
 ### select() with Timeout
+
 ```d
 import std.stdio;
 
@@ -596,6 +630,7 @@ void selectExample() {
 ```
 
 ### epoll_create() Setup
+
 ```d
 version (linux) {
     import core.sys.linux.epoll;
@@ -610,6 +645,7 @@ version (linux) {
 ```
 
 ### epoll_ctl() Add Event
+
 ```d
 import std.stdio;
 
@@ -622,6 +658,7 @@ void epollExample() {
 ```
 
 ### epoll_wait() for Events
+
 ```d
 import std.stdio;
 
@@ -636,6 +673,7 @@ void asyncExample() {
 ## Async Producer/Consumer
 
 ### Fiber Producer
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -654,6 +692,7 @@ writeln("Produced: ", produced);
 ```
 
 ### Fiber Consumer
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -672,6 +711,7 @@ writeln("Consumed: ", consumed);
 ```
 
 ### Producer-Consumer Queue with Fibers
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -696,6 +736,7 @@ consF2.call();
 ```
 
 ### Fiber Pipeline
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -722,6 +763,7 @@ pipeCons.call();
 ## Cooperative Task Queue
 
 ### Task Queue with Fiber Execution
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -740,6 +782,7 @@ runTasks();
 ```
 
 ### Event Queue Pattern
+
 ```d
 import std.stdio;
 
@@ -758,6 +801,7 @@ void eventQueueExample() {
 ```
 
 ### Fiber-Based Worker Pool
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -778,6 +822,7 @@ writeln("Worker results: ", workerResults);
 ```
 
 ### Cooperative Scheduler with Yield Control
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -800,6 +845,7 @@ foreach (f; sched2Fibers) f.call();
 ## Quick Reference
 
 ### Fiber API Summary
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -816,6 +862,7 @@ fib.state;            // Current state (HOLD, EXEC, TERM)
 ```
 
 ### Generator API Summary
+
 ```d
 import std.concurrency : Generator, yield;
 import std.stdio;
@@ -831,6 +878,7 @@ foreach (v; gen) writeln(v);
 ```
 
 ### Event Loop Pattern Summary
+
 ```d
 import std.stdio;
 import std.container : DList;
@@ -848,6 +896,7 @@ void processTaskQueue() {
 ```
 
 ### POSIX I/O Summary
+
 ```d
 version (linux) {
     import core.sys.posix.sys.select;

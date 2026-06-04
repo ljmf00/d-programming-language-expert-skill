@@ -16,6 +16,7 @@ metadata:
 Comprehensive guide to D's Phobos standard library modules and their common usage patterns.
 
 ## Table of Contents
+
 - [std.stdio](#stdstdio)
 - [std.algorithm](#stdalgorithm)
 - [std.range](#stdrange)
@@ -65,6 +66,7 @@ Comprehensive guide to D's Phobos standard library modules and their common usag
 ## std.stdio
 
 ### Basic I/O
+
 ```d
 import std.stdio;
 
@@ -74,10 +76,10 @@ void main() {
     write("Hello, ");
     writeln("World!");
     writefln("Formatted: %d", 42);
-    
+
     // Input
     readln();
-    
+
     // Formatted output
     writefln("Name: %s, Age: %d", "Alice", 30);
     writefln("Hex: %x, Octal: %o", 255, 255);
@@ -86,6 +88,7 @@ void main() {
 ```
 
 ### File Operations
+
 ```d
 import std.stdio;
 
@@ -111,6 +114,7 @@ void appendFile(string path, string content) {
 ```
 
 ### stdin/stdout/stderr
+
 ```d
 import std.stdio;
 
@@ -119,10 +123,10 @@ void main() {
     foreach (line; stdin.byLine()) {
         // Process line
     }
-    
+
     // Write to stdout
     stdout.writeln("To stdout");
-    
+
     // Write to stderr
     stderr.writeln("To stderr");
 }
@@ -131,6 +135,7 @@ void main() {
 ## std.algorithm
 
 ### Searching
+
 ```d
 import std.algorithm : find, canFind, countUntil, count;
 
@@ -150,6 +155,7 @@ auto pos = arr.countUntil(3);  // 2
 ```
 
 ### Sorting
+
 ```d
 import std.algorithm : sort, isSorted, isPartitioned, partition;
 
@@ -166,6 +172,7 @@ arr.partition!(a => a > 3);
 ```
 
 ### Iteration
+
 ```d
 import std.algorithm : map, filter, reduce, each;
 import std.range : enumerate;
@@ -191,6 +198,7 @@ foreach (i, elem; arr.enumerate) {
 ```
 
 ### Mutation
+
 ```d
 import std.algorithm : reverse, fill, copy;
 import std.string : strip;
@@ -215,6 +223,7 @@ arr.copy(dest);
 ## std.range
 
 ### Range Creation
+
 ```d
 import std.range : iota, repeat, cycle, generate;
 
@@ -232,6 +241,7 @@ auto gen = generate!(() => 42);
 ```
 
 ### Range Composition
+
 ```d
 import std.range : chain, zip, lockstep, take, drop;
 
@@ -259,6 +269,7 @@ auto rest = drop(a, 1);  // [2, 3]
 ```
 
 ### Range Primitives
+
 ```d
 import std.range.primitives : isInputRange, isForwardRange,
                               isBidirectionalRange, isRandomAccessRange;
@@ -270,6 +281,7 @@ static assert(isRandomAccessRange!(int[]));
 ## std.array
 
 ### Array Operations
+
 ```d
 import std.array : appender, array, assocArray, insertInPlace;
 
@@ -289,6 +301,7 @@ int[string] aa = assocArray(["a", "b", "c"], [1, 2, 3]);
 ```
 
 ### Array Manipulation
+
 ```d
 import std.array : replace, replicate, split;
 
@@ -307,6 +320,7 @@ auto parts = s.split(',');  // ["a", "b", "c"]
 ## std.string
 
 ### String Operations
+
 ```d
 import std.conv : to;
 import std.string : strip;
@@ -323,6 +337,7 @@ auto joined = ["a", "b", "c"].join(",");  // "a,b,c"
 ```
 
 ### String Searching
+
 ```d
 import std.string : indexOf;
 import std.algorithm : startsWith, endsWith;
@@ -342,6 +357,7 @@ auto pos = s.indexOf("world");  // 6
 ## std.conv
 
 ### Type Conversion
+
 ```d
 import std.conv : to;
 
@@ -356,6 +372,7 @@ string t = to!string(3.14);
 ```
 
 ### Safe Conversion
+
 ```d
 import std.conv : to;
 
@@ -367,6 +384,7 @@ auto s = to!string(42); // "42"
 ## std.format
 
 ### Formatted Output
+
 ```d
 import std.stdio : writefln, writef;
 import std.format : format;
@@ -383,6 +401,7 @@ string s = format("Name: %s, Age: %d", "Alice", 30);
 ```
 
 ### Range Formatting
+
 ```d
 import std.stdio : writefln;
 
@@ -396,6 +415,7 @@ writefln("%(%d, %)", arr);  // "1, 2, 3, 4, 5, "
 ## std.datetime
 
 ### Date and Time
+
 ```d
 import std.datetime : DateTime, Date, TimeOfDay;
 import core.time : hours, minutes;
@@ -417,6 +437,7 @@ auto dur = hours(2) + minutes(30);
 ```
 
 ### Date Arithmetic
+
 ```d
 import std.datetime : DateTime;
 import core.time : days;
@@ -428,6 +449,7 @@ auto nextWeek = dt + days(7);
 ## std.numeric
 
 ### Numeric Algorithms
+
 ```d
 import std.numeric : gcd, lcm;
 import std.range : iota;
@@ -441,6 +463,7 @@ auto l = lcm(12, 8);  // 24
 ```
 
 ### Statistics
+
 ```d
 import std.algorithm : sum;
 
@@ -452,6 +475,7 @@ auto avg = data.sum / data.length;  // 3.0
 ## std.random
 
 ### Random Number Generation
+
 ```d
 import std.random : uniform;
 
@@ -463,6 +487,7 @@ double d = uniform(0.0, 1.0);
 ```
 
 ### Random Distributions
+
 ```d
 import std.random : uniform;
 
@@ -473,6 +498,7 @@ int u = uniform(0, 100);  // 0 to 99
 ## std.typecons
 
 ### Type Constructors
+
 ```d
 import std.typecons : Nullable, Tuple;
 
@@ -489,6 +515,7 @@ writeln(t[1]);  // "hello"
 ```
 
 ### Common Types
+
 ```d
 import std.typecons : Yes, No, Rebindable;
 
@@ -500,6 +527,7 @@ rb = 100;
 ## std.exception
 
 ### Exception Handling
+
 ```d
 import std.exception : enforce, assumeUnique;
 
@@ -514,6 +542,7 @@ auto ptr = assumeUnique(arr);
 ```
 
 ### Custom Exceptions
+
 ```d
 class MyException : Exception {
     this(string msg, string file = __FILE__, uint line = __LINE__) {
@@ -527,6 +556,7 @@ throw new MyException("Something went wrong");
 ## std.file
 
 ### File Operations
+
 ```d
 import std.file : exists, remove, copy;
 
@@ -544,6 +574,7 @@ remove("file.txt");
 ```
 
 ### Directory Operations
+
 ```d
 import std.file : dirEntries, mkdir, rmdir, SpanMode;
 
@@ -562,6 +593,7 @@ rmdir("dir");
 ## std.path
 
 ### Path Manipulation
+
 ```d
 import std.path : dirName, baseName, extension;
 
@@ -578,6 +610,7 @@ string ext = extension("/path/to/file.txt");  // ".txt"
 ## std.process
 
 ### Process Execution
+
 ```d
 import std.process : execute;
 
@@ -590,6 +623,7 @@ writeln(result.status);
 ## std.net.curl
 
 ### HTTP Requests
+
 ```d
 import std.net.curl : get;
 ```
@@ -597,6 +631,7 @@ import std.net.curl : get;
 ## std.json
 
 ### JSON Parsing
+
 ```d
 import std.json : parseJSON, JSONValue;
 
@@ -613,6 +648,7 @@ long age = obj["age"].integer;
 ## std.uri
 
 ### URI Manipulation
+
 ```d
 import std.uri : encode, decode;
 
@@ -624,6 +660,7 @@ string decoded = decode("hello%20world");  // "hello world"
 ## std.uuid
 
 ### UUID Generation
+
 ```d
 import std.uuid : UUID, randomUUID;
 
@@ -638,6 +675,7 @@ auto uuid2 = UUID("550e8400-e29b-41d4-a716-446655440000");
 ## std.digest
 
 ### Hashing
+
 ```d
 import std.digest.sha : SHA256, sha256Of;
 import std.digest.md : MD5, md5Of;
@@ -652,6 +690,7 @@ auto md5hash = md5Of("Hello, World!");
 ## std.container
 
 ### Data Structures
+
 ```d
 import std.container : Array, RedBlackTree;
 import std.stdio;
@@ -671,6 +710,7 @@ writeln();
 ## std.regex
 
 ### Regular Expressions
+
 ```d
 import std.regex : regex, ctRegex, match;
 
@@ -688,6 +728,7 @@ if (m.hit) {
 ## std.sumtype
 
 ### Tagged Union / Sum Type
+
 ```d
 import std.sumtype : SumType, match, tryMatch;
 import std.stdio : writeln;
@@ -714,6 +755,7 @@ void main() {
 ## std.bigint
 
 ### Arbitrary-Precision Integers
+
 ```d
 import std.bigint : BigInt;
 
@@ -740,6 +782,7 @@ long l = a.toLong;  // Truncates if too large
 ## std.checkedint
 
 ### Overflow-Checked Integer Types
+
 ```d
 import std.checkedint : Checked;
 
@@ -757,6 +800,7 @@ try {
 ## std.bitmanip
 
 ### Bit Manipulation
+
 ```d
 import std.bitmanip : BitArray, append;
 
@@ -770,6 +814,7 @@ bits[1] = false;
 ## std.complex
 
 ### Complex Numbers
+
 ```d
 import std.complex : Complex, complex;
 import std.math : sqrt;
@@ -793,6 +838,7 @@ auto mag = sqrt(c1.re * c1.re + c1.im * c1.im);  // Magnitude: sqrt(5)
 ## std.csv
 
 ### CSV File Processing
+
 ```d
 import std.csv : csvReader;
 
@@ -814,6 +860,7 @@ foreach (person; reader) {
 ## std.encoding
 
 ### Character Encoding
+
 ```d
 // D strings are UTF-8 by default
 string s = "Hello";
@@ -823,6 +870,7 @@ writeln(s.length);  // number of code units
 ## std.getopt
 
 ### Command-Line Argument Parsing
+
 ```d
 import std.getopt;
 import std.stdio;
@@ -831,13 +879,13 @@ void main(string[] args) {
     string cfg = "default.conf";
     int port = 8080;
     bool verbose;
-    
+
     getopt(args,
         "cfg", &cfg,
         "port", &port,
         "verbose", &verbose,
     );
-    
+
     writeln("Config: ", cfg);
     writeln("Port: ", port);
 }
@@ -846,6 +894,7 @@ void main(string[] args) {
 ## std.logger
 
 ### Logging Framework
+
 ```d
 import std.logger;
 
@@ -856,6 +905,7 @@ log("Application started");
 ## std.math
 
 ### Mathematical Functions
+
 ```d
 import std.math;
 
@@ -890,6 +940,7 @@ int sign = signbit(x);
 ## std.mathspecial
 
 ### Special Mathematical Functions
+
 ```d
 import std.mathspecial;
 
@@ -908,6 +959,7 @@ double ec = erfc(x);             // Complementary error function
 ## std.mmfile
 
 ### Memory-Mapped Files
+
 ```d
 import std.mmfile : MmFile;
 ```
@@ -915,6 +967,7 @@ import std.mmfile : MmFile;
 ## std.outbuffer
 
 ### Binary Data Serialization
+
 ```d
 import std.outbuffer : OutBuffer;
 
@@ -927,6 +980,7 @@ buf.write(3.14);            // double
 ## std.socket
 
 ### Network Sockets
+
 ```d
 import std.socket;
 import std.stdio;
@@ -936,11 +990,11 @@ void connect() {
     auto socket = new TcpSocket();
     socket.connect(new InternetAddress("example.com", 80));
     socket.send("GET / HTTP/1.0\r\n\r\n");
-    
+
     auto buf = new char[4096];
     auto received = socket.receive(buf);
     writeln(buf[0 .. received]);
-    
+
     socket.close();
 }
 
@@ -949,7 +1003,7 @@ void serve() {
     auto server = new TcpSocket();
     server.bind(new InternetAddress(InternetAddress.ADDR_ANY, 8080));
     server.listen(10);
-    
+
     auto client = server.accept();
     // Handle client
 }
@@ -958,6 +1012,7 @@ void serve() {
 ## std.uni
 
 ### Unicode Algorithms
+
 ```d
 import std.uni : graphemeStride, byGrapheme,
                  isAlpha, isWhite;
@@ -978,6 +1033,7 @@ auto lower = "HELLO".toLower;   // "hello"
 ## std.utf
 
 ### UTF Encoding/Decoding
+
 ```d
 import std.utf : encode, decode, validate;
 
@@ -995,6 +1051,7 @@ writeln("Valid UTF-8");
 ## std.variant
 
 ### Dynamic Typing / Variant
+
 ```d
 import std.variant : Variant, Algebraic;
 
@@ -1016,6 +1073,7 @@ auto a = MyAlgebraic(42);
 ## std.zip
 
 ### Zip Archive Handling
+
 ```d
 import std.zip : ZipArchive;
 ```
@@ -1023,6 +1081,7 @@ import std.zip : ZipArchive;
 ## std.zlib
 
 ### Compression/Decompression
+
 ```d
 import std.zlib;
 import std.stdio;
@@ -1039,6 +1098,7 @@ writeln("Decompressed: ", cast(string) decompressed);
 ## std.net.isemail
 
 ### Email Validation
+
 ```d
 import std.net.isemail : isEmail;
 
@@ -1050,6 +1110,7 @@ writeln("Email valid: ", result);
 ## Quick Reference
 
 ### std.stdio
+
 ```d
 writeln()        // Output with newline
 write()          // Output without newline
@@ -1059,6 +1120,7 @@ File(path, mode) // File handle
 ```
 
 ### std.algorithm
+
 ```d
 filter!(pred)    // Select elements
 map!(transform)  // Transform elements
@@ -1071,6 +1133,7 @@ reverse()        // Reverse in place
 ```
 
 ### std.range
+
 ```d
 iota(start, end)     // Number sequence
 repeat(value, n)     // Repeat element
@@ -1081,18 +1144,21 @@ drop(range, n)       // Skip first n
 ```
 
 ### std.conv
+
 ```d
 to!T("string")       // Convert to type
 toString(value)      // Convert from type
 ```
 
 ### std.format
+
 ```d
 writefln(fmt, args)  // Formatted output
 format(fmt, args)    // Format string
 ```
 
 ### std.datetime
+
 ```d
 Clock.currTime()     // Current date/time (from std.datetime.systime)
 DateTime(y, m, d)    // Create date/time
@@ -1100,6 +1166,7 @@ Duration.days(n)     // Duration
 ```
 
 ### std.random
+
 ```d
 uniform(a, b)        // Random in range
 shuffle(arr)         // Shuffle array
@@ -1108,6 +1175,7 @@ shuffle(arr)         // Shuffle array
 ## Common Idioms
 
 ### Reading File Line by Line
+
 ```d
 import std.stdio;
 
@@ -1117,6 +1185,7 @@ foreach (line; File("file.txt").byLine()) {
 ```
 
 ### Processing with Ranges
+
 ```d
 import std.algorithm : filter, map, reduce;
 import std.range : iota;
@@ -1128,6 +1197,7 @@ auto result = iota(1, 101)
 ```
 
 ### Safe Type Conversion
+
 ```d
 import std.conv : to;
 
@@ -1135,6 +1205,7 @@ auto value = to!int("42");
 ```
 
 ### JSON Parsing
+
 ```d
 import std.json : parseJSON;
 
@@ -1144,6 +1215,7 @@ auto name = obj["name"].str;
 ```
 
 ## References
+
 - [Phobos Documentation](https://dlang.org/phobos/)
 - [std.algorithm](https://dlang.org/phobos/std_algorithm.html)
 - [std.range](https://dlang.org/phobos/std_range.html)

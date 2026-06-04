@@ -18,6 +18,7 @@ metadata:
 Comprehensive guide to D's concurrency model, message passing, parallelism, and synchronization primitives.
 
 ## Table of Contents
+
 - [Concurrency Model](#concurrency-model)
 - [std.concurrency](#stdconcurrency)
 - [std.parallelism](#stdparallelism)
@@ -30,6 +31,7 @@ Comprehensive guide to D's concurrency model, message passing, parallelism, and 
 ## Concurrency Model
 
 ### D's Approach to Concurrency
+
 D embraces the concept of **shared nothing** with message passing as the default concurrency model. Threads do not share mutable state by default; instead, they communicate through messages.
 
 ```d
@@ -50,6 +52,7 @@ send(tid, "Hello from main thread");
 ```
 
 ### Immutable Data Sharing
+
 ```d
 // Immutable (thread-local by default)
 int localVar = 42;
@@ -62,6 +65,7 @@ shared int globalCounter = 0;
 ```
 
 ### Thread Safety Model
+
 ```d
 // @safe functions cannot share mutable data
 int safeFunction() @safe {
@@ -79,6 +83,7 @@ int sharedFunction() @system {
 ## std.concurrency
 
 ### Spawning Threads
+
 ```d
 import std.concurrency : spawn, receive, receiveOnly;
 import std.stdio;
@@ -122,6 +127,7 @@ auto tid3 = spawn({
 ```
 
 ### Message Passing (Send/Receive)
+
 ```d
 import std.concurrency;
 import std.stdio;
@@ -137,7 +143,7 @@ void sender(Tid receiver) {
 void receiver() {
     // Receive specific type
     string msg = receiveOnly!(string);
-    
+
     // Receive multiple types
     receive(
         (string s) { writeln("Got string: ", s); },
@@ -148,6 +154,7 @@ void receiver() {
 ```
 
 ### Priority Messages
+
 ```d
 import std.concurrency;
 import std.stdio;
@@ -171,6 +178,7 @@ void worker() {
 ```
 
 ### Owner Receiver
+
 ```d
 import std.concurrency;
 import std.stdio;
@@ -188,11 +196,13 @@ writeln("Sent int to worker");
 ```
 
 ### spawnLinked
+
 `spawnLinked` is not part of the `std.concurrency` public API; use `spawn` and handle `OwnerTerminated` / `LinkTerminated` messages in the child for error propagation patterns.
 
 ## std.parallelism
 
 ### Parallel foreach
+
 ```d
 import std.parallelism : parallel;
 import std.range : iota;
@@ -211,6 +221,7 @@ writeln("Done");
 ```
 
 ### taskPool
+
 ```d
 import std.parallelism;
 import std.stdio;
@@ -221,6 +232,7 @@ writeln("Result: ", result.front);
 ```
 
 ### Parallel Map
+
 ```d
 import std.parallelism;
 import std.range : iota;
@@ -234,6 +246,7 @@ writeln("First result: ", result.front);
 ```
 
 ### amap (eager parallel map)
+
 ```d
 import std.parallelism;
 import std.stdio;
@@ -245,6 +258,7 @@ writeln("Result: ", result);  // [1, 4, 9, 16, 25, ...]
 ```
 
 ### areduce
+
 ```d
 import std.parallelism;
 import std.range : iota;
@@ -260,6 +274,7 @@ writeln("Sum: ", sum);
 ```
 
 ### Future
+
 ```d
 import std.parallelism;
 import std.stdio;
@@ -272,6 +287,7 @@ writeln("Future result: ", val);
 ```
 
 ### Individual Tasks
+
 ```d
 import std.parallelism;
 import std.stdio;
@@ -284,6 +300,7 @@ writeln("Task result: ", val);
 ```
 
 ### Parallel foreach with Parallelism
+
 ```d
 import std.parallelism : parallel;
 import std.stdio;
@@ -304,6 +321,7 @@ foreach (i; parallel(arr, 100)) {
 ## Threads and Fibers
 
 ### Thread Class
+
 ```d
 import core.thread : Thread;
 import std.stdio;
@@ -326,6 +344,7 @@ thread2.join();
 ```
 
 ### Fiber (Coroutine)
+
 ```d
 import core.thread : Fiber;
 import std.stdio;
@@ -366,6 +385,7 @@ void fiberExample() {
 ```
 
 ### Fiber Scheduler and Generator
+
 ```d
 import std.concurrency : Generator, yield;
 import core.thread : Fiber;
@@ -395,6 +415,7 @@ genFiber.call();
 ```
 
 ### Atomic Operations (core.atomic)
+
 ```d
 import core.atomic;
 import std.stdio;
@@ -419,6 +440,7 @@ if (cas(&casTarget, 0, 1)) {  // If target == 0, set to 1
 ```
 
 ### Synchronization Primitives (core.sync)
+
 ```d
 import core.sync.mutex : Mutex;
 import core.sync.condition : Condition;
@@ -465,7 +487,7 @@ void parallelWorker(int id) {
     // Phase 1
     writeln("Work phase 1 for ", id);
     bar.wait();  // Wait for all 3 threads
-    
+
     // Phase 2
     writeln("Work phase 2 for ", id);
     bar.wait();
@@ -473,6 +495,7 @@ void parallelWorker(int id) {
 ```
 
 ### Condition Variable
+
 ```d
 import core.sync.condition : Condition;
 import core.thread : Thread;
@@ -509,6 +532,7 @@ void producer() {
 ## Synchronization
 
 ### synchronized Statement
+
 ```d
 import core.sync.mutex : Mutex;
 import std.stdio;
@@ -519,7 +543,7 @@ auto mutex = new Mutex();
 void criticalSection() {
     mutex.lock();
     scope(exit) mutex.unlock();
-    
+
     writeln("In critical section");
 }
 
@@ -533,6 +557,7 @@ void threadFunction() {
 ```
 
 ### Atomic Operations
+
 ```d
 import core.atomic : atomicOp, atomicLoad, atomicStore;
 
@@ -547,6 +572,7 @@ void threadFunction() {
 ```
 
 ### Read-Write Lock
+
 ```d
 import core.sync.rwmutex : ReadWriteMutex;
 
@@ -566,6 +592,7 @@ void writeOperation() {
 ```
 
 ### Semaphore
+
 ```d
 import core.sync.semaphore : Semaphore;
 import std.stdio;
@@ -576,13 +603,14 @@ auto sem = new Semaphore(3);
 void limitedResource() {
     sem.wait();  // Acquire a permit
     scope(exit) sem.notify();  // Release permit
-    
+
     // Access resource
     writeln("Accessed resource");
 }
 ```
 
 ### Barrier
+
 ```d
 import core.sync.barrier : Barrier;
 
@@ -591,7 +619,7 @@ auto barrier = new Barrier(3);  // Wait for 3 participants
 void workerFunction() {
     // Do work...
     barrier.wait();  // Wait for all participants
-    
+
     // Continue with synchronized work
 }
 ```
@@ -599,6 +627,7 @@ void workerFunction() {
 ## Data Sharing
 
 ### shared Keyword
+
 ```d
 // Shared data requires synchronization
 shared int g_counter = 0;
@@ -616,6 +645,7 @@ string sharedToString(shared int value) {
 ```
 
 ### Mutable Data Sharing
+
 ```d
 import core.sync.mutex : Mutex;
 import std.stdio;
@@ -624,17 +654,17 @@ import std.stdio;
 class ChatHistory {
     private string[] messages;
     private Mutex mutex;
-    
+
     this() {
         mutex = new Mutex();
     }
-    
+
     void addMessage(string msg) {
         mutex.lock();
         scope(exit) mutex.unlock();
         messages ~= msg;
     }
-    
+
     string[] getMessages() {
         mutex.lock();
         scope(exit) mutex.unlock();
@@ -646,6 +676,7 @@ auto history = new ChatHistory();
 ```
 
 ### Thread-Local Storage
+
 ```d
 // Thread-local data (default for globals in D)
 __gshared int globalCount = 0;  // Shared across all threads
@@ -657,6 +688,7 @@ void threadFunction() {
 ```
 
 ### Immutable Sharing
+
 ```d
 // Immutable data is safe to share
 immutable string config = "config content";
@@ -671,6 +703,7 @@ void readerThread() {
 ## Common Patterns
 
 ### Worker Pool
+
 ```d
 import std.concurrency;
 import std.stdio;
@@ -703,6 +736,7 @@ send(worker, "STOP");
 ```
 
 ### Producer-Consumer
+
 ```d
 import std.concurrency;
 import std.stdio;
@@ -734,6 +768,7 @@ send(consumer, "SHUTDOWN");
 ```
 
 ### Pipeline
+
 ```d
 import std.concurrency;
 import std.stdio;
@@ -767,6 +802,7 @@ auto stage2 = spawn({
 ## Quick Reference
 
 ### Concurrency Primitives
+
 ```d
 // Message passing
 spawn(&function)           // Spawn new thread
@@ -779,6 +815,7 @@ thisTid                    // Current thread's ID
 ```
 
 ### Parallelism
+
 ```d
 parallel(range)            // Parallel foreach
 amap!func(range)           // Parallel map
@@ -787,6 +824,7 @@ taskPool                   // Task scheduler
 ```
 
 ### Parallelization
+
 ```d
 parallel(range)            // Parallel foreach
 amap!func(range)           // Parallel map
@@ -797,6 +835,7 @@ asyncBuf(range, size)      // Async buffered range
 ```
 
 ### Synchronization
+
 ```d
 Mutex                      // Mutual exclusion
 synchronized               // Method/block synchronization
@@ -809,6 +848,7 @@ Barrier                    // Thread barrier
 ```
 
 ### Thread Primitives
+
 ```d
 core.thread.Thread         // Thread class
 core.thread.Fiber          // Coroutine class
@@ -819,6 +859,7 @@ Generator!T                // Coroutine generator
 ```
 
 ### Message Passing
+
 ```
 send(tid, msg)             // Send message
 receiveOnly!T()            // Receive specific type
@@ -833,6 +874,7 @@ spawnSingleton!("name", &func)  // Singleton thread
 ```
 
 ### Data Sharing
+
 ```d
 shared int x;              // Shared data (needs sync)
 immutable int y;           // Immutable data (thread-safe)
@@ -841,6 +883,7 @@ int t;                     // Thread-local (default)
 ```
 
 ## References
+
 - [std.concurrency](https://dlang.org/phobos/std_concurrency.html)
 - [std.parallelism](https://dlang.org/phobos/std_parallelism.html)
 - [core.thread](https://dlang.org/phobos/core_thread.html)

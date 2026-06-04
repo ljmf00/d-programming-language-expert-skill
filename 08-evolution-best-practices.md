@@ -14,6 +14,7 @@ metadata:
 # D Programming Language - Evolution & Best Practices
 
 ## Table of Contents
+
 - [Accepted DIPs Reference](#accepted-dips-reference)
 - [DIP 1013: Deprecation Process](#dip-1013-deprecation-process)
 - [DIP 1029: throw as Function Attribute](#dip-1029-throw-as-function-attribute)
@@ -33,20 +34,20 @@ metadata:
 Key DIPs and their current default/preview status. "Default" means enabled in
 current stable DMD and LDC. "Preview" requires an explicit flag.
 
-| DIP | Title | Status | Compiler Flag |
-|-----|-------|--------|---------------|
-| [1000](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1000.md) | Scoped Pointers | Preview | `-preview=dip1000` |
-| [1014](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1014.md) | Move Semantics | Default | — |
-| [1018](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1018.md) | Copy Constructor | Default | — |
-| [1029](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1029.md) | throw as Function Attribute | Default | — |
-| [1030](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1030.md) | Named Arguments | Default | — |
-| [1034](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1034.md) | noreturn Bottom Type | Default | — |
-| [1035](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1035.md) | @system Variables | Preview | `-preview=systemVariables` |
-| [1038](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1038.md) | @mustuse | Default | — |
-| [1043](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1043.md) | Shortened Method Syntax | Default | — |
-| [1048](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1048.md) | Language Bitfields | Default (DMD 2.108+/LDC 1.36+) | — |
-| [1052](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1052.md) | Editions | In progress | — |
-| [1053](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1053.md) | Tuple Unpacking | In progress | — |
+| DIP                                                                        | Title                       | Status                         | Compiler Flag              |
+| -------------------------------------------------------------------------- | --------------------------- | ------------------------------ | -------------------------- |
+| [1000](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1000.md) | Scoped Pointers             | Preview                        | `-preview=dip1000`         |
+| [1014](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1014.md) | Move Semantics              | Default                        | —                          |
+| [1018](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1018.md) | Copy Constructor            | Default                        | —                          |
+| [1029](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1029.md) | throw as Function Attribute | Default                        | —                          |
+| [1030](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1030.md) | Named Arguments             | Default                        | —                          |
+| [1034](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1034.md) | noreturn Bottom Type        | Default                        | —                          |
+| [1035](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1035.md) | @system Variables           | Preview                        | `-preview=systemVariables` |
+| [1038](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1038.md) | @mustuse                    | Default                        | —                          |
+| [1043](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1043.md) | Shortened Method Syntax     | Default                        | —                          |
+| [1048](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1048.md) | Language Bitfields          | Default (DMD 2.108+/LDC 1.36+) | —                          |
+| [1052](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1052.md) | Editions                    | In progress                    | —                          |
+| [1053](https://github.com/dlang/DIPs/blob/master/DIPs/accepted/DIP1053.md) | Tuple Unpacking             | In progress                    | —                          |
 
 ## DIP 1013: Deprecation Process
 

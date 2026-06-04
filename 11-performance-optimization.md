@@ -503,16 +503,18 @@ void knownSizeDemo() {
 }
 ```
 
-### LDC Assume In-Bounds
+### Pointer Indexing to Skip Bounds Checks
+
+Indexing through the raw `.ptr` (a pointer, not the slice) is not bounds-checked,
+so the loop below skips per-element checks regardless of `-boundscheck`. It is
+therefore `@trusted` — you are asserting `i` stays in range. (To drop bounds
+checks globally instead, compile with `-boundscheck=off`.)
 
 ```d
-import ldc.attributes : assumeUsed;
-
 void unsafeButFast(float[] arr) @trusted {
     auto p = arr.ptr;
-    // Tells LDC to skip bounds checks (use sparingly)
     foreach (i; 0 .. arr.length) {
-        p[i] += 1.0f;
+        p[i] += 1.0f;  // no bounds check — indexing a pointer, not the slice
     }
 }
 

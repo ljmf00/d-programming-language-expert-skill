@@ -559,7 +559,8 @@ import std.algorithm : group;
 
 int[] arr = [1, 1, 2, 2, 3, 3];
 
-foreach (count, value; arr.group) {
+// group yields tuples of (value, count) — destructure in that order
+foreach (value, count; arr.group) {
     writeln(value, ": ", count);
 }
 ```

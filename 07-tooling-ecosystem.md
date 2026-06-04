@@ -79,9 +79,10 @@ dmd -w main.d
 -vtls           # Show thread-local storage info
 
 # Warnings
--w              # Enable warnings
--wi             # Enable informational warnings
--de            # Enable deprecation warnings
+-w              # Enable warnings (treated as errors)
+-wi             # Enable informational warnings (non-fatal)
+-dw             # Deprecations as warnings
+-de             # Deprecations as errors
 
 # Safety
 -check         # Enable contracts and asserts
@@ -216,7 +217,9 @@ ldc2 -output-s main.d
 -O1  # Light optimization
 -O2  # Standard optimization
 -O3  # Heavy optimization
--O5  # Max optimization (may increase code size)
+-Os  # Optimize for size
+-Oz  # Aggressively optimize for size
+# (-O is an alias for -O3; there is no -O4/-O5)
 
 # Architecture-specific
 -mcpu=native        # Optimize for current CPU
@@ -235,18 +238,18 @@ ldc2 -output-s main.d
 ### LDC vs DMD Features
 
 ```d
-// DMD-specific features
-version(D_Version2) { }
-
-// LDC-specific features
-version(LDC) { }
-
-// Check compiler
-static if (__traits(compiles, __VERSION__)) {
-    // This is DMD
-} else {
-    // This is LDC or GDC
+// Select the backend with the predefined version identifiers. __VERSION__ is
+// the frontend version and is defined by ALL D compilers, so it cannot be used
+// to tell them apart — use version(DMD) / version(LDC) / version(GDC).
+version (DMD) {
+    // DMD-specific code
+} else version (LDC) {
+    // LDC-specific code (e.g. ldc.attributes, ldc.intrinsics)
+} else version (GDC) {
+    // GDC-specific code
 }
+
+pragma(msg, "Frontend version: ", __VERSION__);  // e.g. 2111 — same identifier on all three
 ```
 
 ### LDC Configuration
@@ -788,7 +791,7 @@ void testDUBBuildTypes() {
 ```
 
 ```json
-"preBuildCommands": ["python3 generate_code.d"],
+"preBuildCommands": ["rdmd generate_code.d"],
 "postBuildCommands": ["cp myapp dist/"]
 ```
 
@@ -1016,8 +1019,8 @@ Key recent milestones:
 ### VS Code
 
 ```bash
-# Install extension
-code --install-extension laurenttrudel:code-d
+# Install extension (publisher is webfreak)
+code --install-extension webfreak.code-d
 
 # Features provided:
 # - Syntax highlighting

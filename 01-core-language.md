@@ -716,12 +716,25 @@ class MyClass {
 
 ### Copy Constructor
 
+A copy constructor takes the source by `ref` (DIP 1018). It superseded the
+legacy postblit `this(this)` — the two are different features, so don't conflate
+them (a postblit copies the bits first, then fixes up; a copy constructor builds
+the destination directly):
+
 ```d
 struct Copyable {
     int[] data;
 
-    this(this) {
-        // Postblit / copy constructor - called on copy
+    // Copy constructor (DIP 1018)
+    this(ref return scope const Copyable other) {
+        data = other.data.dup;  // deep copy
+    }
+}
+
+// Legacy equivalent (predates DIP 1018):
+struct CopyableOld {
+    int[] data;
+    this(this) {        // postblit — runs after a bitwise copy
         data = data.dup;
     }
 }
@@ -794,7 +807,7 @@ enum Color { RED, GREEN, BLUE }
 // Enum with underlying type
 enum Priority : int { LOW = 1, MEDIUM = 2, HIGH = 3 }
 
-// Strongly typed enum (DIP 1018)
+// Enum with an explicit base type and initialized members
 enum Status : int {
     OK = 0,
     ERROR = 1,

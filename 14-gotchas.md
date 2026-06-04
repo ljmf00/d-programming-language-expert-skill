@@ -167,7 +167,7 @@ void main() {
 `shared` marks data as being shared across threads, which prevents the compiler from making thread-local assumptions. It does **not** add automatic locking or atomics. Accessing `shared` data without synchronization is still a data race.
 
 ```d
-import core.atomic : atomicLoad, atomicStore;
+import core.atomic : atomicOp, atomicFetchAdd;
 
 shared int counter = 0;
 
@@ -175,12 +175,17 @@ void increment() {
     // Wrong: not atomic, data race on counter
     // counter++;
 
-    // Correct: use atomic operations
-    atomicStore(counter, atomicLoad(counter) + 1);
+    // Also wrong: a separate atomic load + atomic store is NOT an atomic
+    // read-modify-write — another thread can write in between:
+    // atomicStore(counter, atomicLoad(counter) + 1);
+
+    // Correct: a single atomic read-modify-write
+    atomicOp!"+="(counter, 1);     // or: atomicFetchAdd(counter, 1);
 }
 ```
 
-For compound operations, use `core.sync.mutex.Mutex` or `synchronized` blocks. For simple counters prefer `core.atomic.atomicFetchAdd`.
+For multi-step updates that must be consistent, use `core.sync.mutex.Mutex` or a
+`synchronized` block, or a `cas` retry loop.
 
 ---
 

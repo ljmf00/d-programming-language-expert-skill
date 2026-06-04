@@ -63,8 +63,6 @@ Comprehensive guide to D's Phobos standard library modules and their common usag
 
 ## std.stdio
 
-## std.stdio
-
 ### Basic I/O
 
 ```d
@@ -862,9 +860,16 @@ foreach (person; reader) {
 ### Character Encoding
 
 ```d
-// D strings are UTF-8 by default
-string s = "Hello";
-writeln(s.length);  // number of code units
+import std.encoding : sanitize, transcode;
+
+string s = "Hello";  // D strings are UTF-8 by default
+
+// sanitize: replace any invalid UTF sequences with the replacement char
+string clean = sanitize(s);
+
+// transcode: convert between string encodings (UTF-8 -> UTF-16 here)
+wstring w;
+transcode(s, w);
 ```
 
 ## std.getopt
@@ -1162,7 +1167,7 @@ format(fmt, args)    // Format string
 ```d
 Clock.currTime()     // Current date/time (from std.datetime.systime)
 DateTime(y, m, d)    // Create date/time
-Duration.days(n)     // Duration
+days(n)              // Duration (core.time; or dur!"days"(n))
 ```
 
 ### std.random

@@ -31,8 +31,13 @@ import std.string;
 import std.traits;
 import std.meta;"""
 
+# Markers that identify a block as non-compilable pseudocode/prose rather than D.
+# NOTE: do NOT add bare "DIP NNNN" here — it matches ordinary code comments like
+# `// Expression-based contracts (DIP 1009)` and would silently exclude real,
+# possibly-broken snippets from compilation. DIP-prose tables live in markdown
+# (not ```d fences), and comment-only blocks are already caught by is_quick_ref.
 NON_D_PATTERNS = ['→', '$(D', '$(I', '$(B', '$(LINK2', '$(REF', '$(SECTION',
-                  '$(SUBREF', '$(DDOC_', 'DIP 100', 'import libdparse']
+                  '$(SUBREF', '$(DDOC_', 'import libdparse']
 
 
 def detect_ldc() -> str:
@@ -90,7 +95,7 @@ def split_code(code: str) -> Tuple[List[str], List[str]]:
     stmts = []
     in_unittest = False
     unittest_block = []
-    
+
     for line in code.split("\n"):
         s = line.strip()
         # Track unittest blocks (they go at module level)
@@ -98,7 +103,7 @@ def split_code(code: str) -> Tuple[List[str], List[str]]:
             in_unittest = True
             unittest_block.append(line)
             continue
-        
+
         if in_unittest:
             unittest_block.append(line)
             if s == "}":
@@ -107,11 +112,11 @@ def split_code(code: str) -> Tuple[List[str], List[str]]:
                 unittest_block = []
                 in_unittest = False
             continue
-        
+
         if not s or s.startswith("//") or s.startswith("/*"):
             decls.append(line)
             continue
-        
+
         # Classify line
         if (re.match(r'^(import|module|enum|struct|class|interface|union|template|mixin\s+'
                      r'template|alias|version|debug|static assert|static if|static foreach|'
@@ -132,20 +137,20 @@ def split_code(code: str) -> Tuple[List[str], List[str]]:
             decls.append(line)
         else:
             stmts.append(line)
-    
+
     if unittest_block:  # Unterminated unittest block
         decls.extend(unittest_block)
-    
+
     return decls, stmts
 
 
 def smart_wrap(code: str) -> List[Tuple[str, str]]:
     """Generate candidate wrapped versions. Returns list of (label, code)."""
     candidates = []
-    
+
     # If has module declaration, keep it at top
     has_module = re.search(r'^module\s+', code, re.MULTILINE)
-    
+
     # If already has main, just return as-is (with imports if needed)
     if has_main(code):
         candidates.append(("as-is", code))
@@ -154,12 +159,12 @@ def smart_wrap(code: str) -> List[Tuple[str, str]]:
         elif has_module:
             candidates.append(("+def", re.sub(r'^(module\s+[^;]+;)', r'\1\n\n' + DEFAULT_IMPORTS, code, count=1, flags=re.MULTILINE)))
         return candidates
-    
+
     # Split into declarations and statements
     decls, stmts = split_code(code)
     decl_text = "\n".join(decls)
     stmt_text = "\n".join(stmts)
-    
+
     # Build candidates
     def add_candidate(label, code_text):
         candidates.append((label, code_text))
@@ -169,7 +174,7 @@ def smart_wrap(code: str) -> List[Tuple[str, str]]:
             candidates.append(("+def+" + label, fixed))
         else:
             candidates.append(("+def+" + label, DEFAULT_IMPORTS + "\n\n" + code_text))
-    
+
     # Strategy 1: decls at module level, stmts in void main()
     if stmt_text.strip():
         if decl_text.strip():
@@ -179,13 +184,13 @@ def smart_wrap(code: str) -> List[Tuple[str, str]]:
         add_candidate("smart", wrapped)
     else:
         add_candidate("decls", decl_text + "\n\nvoid main() {}")
-    
+
     # Strategy 2: everything in void main()
     add_candidate("main{code}", f"void main() {{\n{code}\n}}")
-    
+
     # Strategy 3: declarations + empty main
     add_candidate("decls+main{}", code + "\n\nvoid main() {}")
-    
+
     # Strategy 4: everything in a unittest block
     if has_module:
         m = re.search(r'^(module\s+[^;]+;)\s*\n?', code, re.MULTILINE)
@@ -195,7 +200,7 @@ def smart_wrap(code: str) -> List[Tuple[str, str]]:
             add_candidate("unittest", f"{mod_line}\n\nunittest {{\n{rest}\n}}")
     else:
         add_candidate("unittest", f"unittest {{\n{code}\n}}")
-    
+
     return candidates
 
 

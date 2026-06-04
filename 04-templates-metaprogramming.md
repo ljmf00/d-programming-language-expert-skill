@@ -293,38 +293,39 @@ auto process(T...)(T args) {
 
 An eponymous template has the same name as a member within it, allowing direct use:
 
+The inner member must share the template's name — then `Tmpl!Args` resolves to
+it directly (no `.member` access):
+
 ```d
-// Eponymous template alias
-template GreatestCommonDivisor(T) {
-    static if (is(T == int)) {
-        alias GCD = int;
-    } else {
-        alias GCD = T;
-    }
+// Eponymous type alias: inner alias is named `Pointer`, like the template.
+template Pointer(T) {
+    alias Pointer = T*;
 }
 
-// Usage: GCD!int directly resolves to the inner alias
-alias gcdType = GreatestCommonDivisor!int;
+// Usage: Pointer!int IS int* (resolves to the inner alias directly)
+static assert(is(Pointer!int == int*));
 
-// Eponymous template with variable
+// Eponymous value template (recursive): inner enum is named `Factorial`.
 template Factorial(int n) {
-    static if (n <= 0)
-        enum factorial = 1;
+    static if (n <= 1)
+        enum Factorial = 1;
     else
-        enum factorial = n * Factorial!(n-1).factorial;
+        enum Factorial = n * Factorial!(n - 1);
 }
 
 // Usage
-enum f5 = Factorial!5.factorial;  // 120
+enum f5 = Factorial!5;  // 120
 
-// Eponymous template using enum (more concise)
-template Square(int n) {
-    enum Square = n * n;
-}
+// Short eponymous syntax (preferred for one-liners)
+enum Square(int n) = n * n;
 
 // Usage
 enum s = Square!5;  // 25
 ```
+
+> A template whose inner symbol has a _different_ name (e.g.
+> `template T(A) { alias inner = ...; }`) is **not** eponymous: `T!A` then names
+> the template instance, and you must write `T!A.inner`.
 
 ## Template Parameter Deduction
 
@@ -647,12 +648,14 @@ template Unpack(T...) {
 ```d
 import std.meta : staticMap;
 
-// Apply template to each type in sequence
-template MakePtr(T) {
-    alias type = T*;
-}
+// staticMap applies an EPONYMOUS template and collects its result, so MakePtr
+// must alias to `MakePtr` (not an inner `type`), or staticMap would yield the
+// template instances rather than the pointer types.
+alias MakePtr(T) = T*;
 
 alias PtrTypes = staticMap!(MakePtr, int, double, string);
+// PtrTypes == AliasSeq!(int*, double*, string*)
+static assert(is(PtrTypes[0] == int*));
 ```
 
 ### Filter
@@ -1018,11 +1021,12 @@ mixin Simple!();
 ```d
 import std.meta : AliasSeq, staticMap, Filter, Erase,
                   allSatisfy, anySatisfy, Reverse;
+import std.traits : isIntegral;
 
-template MakePtr(T) { alias type = T*; }
+alias MakePtr(T) = T*;  // eponymous, so staticMap yields the pointer types
 
 alias Seq = AliasSeq!(int, double);
-alias Mapped = staticMap!(MakePtr, Seq);
+alias Mapped = staticMap!(MakePtr, Seq);  // AliasSeq!(int*, double*)
 alias Filtered = Filter!(isIntegral, Seq);
 alias Reversed = Reverse!(Seq);
 ```

@@ -541,6 +541,7 @@ is distinct from the by-`ref` copy constructor and from the legacy DIP 1014
 than the `__rvalue(...)` primitive directly.
 
 ```d
+//@requires dmd>=2.111  (DIP 1040: move + copy ctors may coexist)
 import core.lifetime : move;
 
 // Move-only type: copying disabled, transfer via a by-value move constructor.

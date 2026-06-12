@@ -381,34 +381,107 @@ auto s = to!string(42); // "42"
 
 ## std.format
 
-### Formatted Output
+`writef`/`writefln` (std.stdio) and `format`/`sformat` (std.format) all share
+one format-string syntax: literal text interspersed with specifiers. Each
+specifier starts with `%`, ends with a conversion character, and carries
+optional fields in between (use `%%` for a literal `%`):
+
+```
+%[position$][flags][width][.precision][,separator]<conv>
+```
+
+### Conversion characters
+
+| Spec | Renders |
+|------|---------|
+| `%s` | Default, type-driven form; works with any type (see below) |
+| `%c` | A single character |
+| `%d` | Signed decimal integer |
+| `%u` | Unsigned decimal (the underlying bit pattern) |
+| `%b` | Binary |
+| `%o` | Octal |
+| `%x` / `%X` | Hexadecimal, lower / upper case |
+| `%e` / `%E` | Scientific notation, e.g. `1.5e+03` |
+| `%f` / `%F` | Fixed-point decimal, e.g. `1500.0` |
+| `%g` / `%G` | Whichever of `%e`/`%f` is shorter |
+| `%a` / `%A` | Hexadecimal floating-point |
+| `%r` | Raw bytes (endian-dependent, not printable) |
+
+An uppercase conversion character uppercases the letters in its output.
+
+### Flags, width, precision, separator
+
+| Field | Effect |
+|-------|--------|
+| `-` | Left-justify within `width` |
+| `=` | Center within `width` |
+| `+` | Always show a sign on positive numbers |
+| (space) | Prefix positives with a space (`+` wins if both are given) |
+| `0` | Pad numbers with leading zeros instead of spaces |
+| `#` | Alternate form, e.g. the `0x` prefix for `%#x` |
+| `width` | Minimum field width |
+| `.precision` | Fractional digits (reals), min digits (ints), max elements (strings/ranges) |
+| `,n` | Group digits every `n` (default 3): `%,d` of `1000000` -> `1,000,000` |
 
 ```d
-import std.stdio : writefln, writef;
 import std.format : format;
 
-// writefln with format string
-writefln("Name: %s, Age: %d", "Alice", 30);
-writefln("Hex: %x, Octal: %o", 255, 255);
-writefln("Float: %.2f", 3.14159);
-writefln("Pad: %10s", "right");
-writefln("Align: %-10s", "left");
-
-// format function
-string s = format("Name: %s, Age: %d", "Alice", 30);
+format("%-10s|", "left");    // "left      |"
+format("%010.3f", 3.14159);  // "000003.142"
+format("%+d", 42);           // "+42"
+format("%#x", 255);          // "0xff"
+format("%,d", 1_000_000);    // "1,000,000"
 ```
 
-### Range Formatting
+### Positional and runtime-supplied fields
 
 ```d
-import std.stdio : writefln;
+// n$ addresses arguments directly (1-based)
+format("%2$s %1$s", "world", "hello");  // "hello world"
 
-int[] arr = [1, 2, 3, 4, 5];
-
-// Format range
-writefln("%(%d %)", arr);  // "1 2 3 4 5 "
-writefln("%(%d, %)", arr);  // "1, 2, 3, 4, 5, "
+// * pulls width/precision from the argument list
+format("%*.*f", 8, 2, 3.14159);         // "    3.14"
 ```
+
+### Range / compound formatting `%(...%)`
+
+A `%(...%)` block formats each element of an array, range, or AA with the inner
+spec. The trailing literal is the delimiter, placed *between* elements and
+dropped after the last. `%|` marks where the delimiter starts when leading text
+must be kept per element. Inside a compound, strings and chars are escaped
+(quoted) by default; `%-(` disables that.
+
+```d
+format("%(%d %)",   [1, 2, 3]);     // "1 2 3"        (space is the delimiter)
+format("%(%d, %)",  [1, 2, 3]);     // "1, 2, 3"
+format("%(%s, %)",  ["a", "b"]);    // `"a", "b"`     (elements quoted)
+format("%-(%s, %)", ["a", "b"]);    // "a, b"         (%-( disables quoting)
+format("%(-%s-%|, %)", [1, 2, 3]);  // "-1-, -2-, -3-" (text before %| is per-element)
+format("%(%s=%s, %)", ["a": 1]);    // "a=1"          (AA: first spec key, second value)
+```
+
+### How `%s` Renders Values
+
+`%s` is the default, type-driven spec: it renders each value by its type's
+semantics rather than its raw numeric value. For most scalars this matches the
+numeric form, but several types render symbolically:
+
+```d
+import std.format : format;
+
+bool b   = true;
+char c   = 'A';
+enum Color { red, green }
+
+format("%s", b);          // "true"  (not "1")
+format("%s", c);          // "A"     (not "65")
+format("%s", Color.red);  // "red"   (not "0")
+```
+
+So `%s` on a `bool`, `char`/`wchar`/`dchar`, or `enum` is *not* the same as
+formatting its underlying integer -- even though the compiler trait
+`__traits(isIntegral, T)` reports `true` for all of them. Use `%d` when you
+specifically want the numeric value.
 
 ## std.datetime
 

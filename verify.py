@@ -40,6 +40,35 @@ NON_D_PATTERNS = ['→', '$(D', '$(I', '$(B', '$(LINK2', '$(REF', '$(SECTION',
                   '$(SUBREF', '$(DDOC_', 'import libdparse']
 
 
+# Per-snippet version gate, e.g. `//@requires dmd>=2.111` as the block's first
+# line. The frontend version is parsed from the compiler banner; a too-old
+# compiler skips the block (rather than failing), while a new-enough one compiles
+# it normally — so version-gated snippets get really verified once the toolchain
+# catches up.
+REQUIRES_RE = re.compile(r'^\s*//@requires\s+dmd\s*>=\s*([\d.]+)',
+                         re.MULTILINE | re.IGNORECASE)
+
+
+def parse_requires(code: str) -> Optional[Tuple[int, ...]]:
+    m = REQUIRES_RE.search(code)
+    return tuple(int(x) for x in m.group(1).split(".")) if m else None
+
+
+def parse_frontend_version(banner: str) -> Optional[Tuple[int, ...]]:
+    """Extract the DMD frontend version from a compiler --version banner.
+
+    Works for LDC ('based on DMD v2.108.1') and ldmd2 ('... v2.108.1')."""
+    m = re.search(r'v(\d+)\.(\d+)(?:\.(\d+))?', banner)
+    if not m:
+        return None
+    return tuple(int(g) for g in m.groups() if g is not None)
+
+
+def version_ge(have: Tuple[int, ...], want: Tuple[int, ...]) -> bool:
+    pad = lambda t: t + (0,) * (3 - len(t))
+    return pad(have) >= pad(want)
+
+
 def detect_ldc() -> str:
     for c in ["ldc2", "ldmd2"]:
         try:
@@ -221,12 +250,18 @@ def try_compile(code: str, ldc_path: str, extra_args: Optional[List[str]] = None
 
 
 def verify_snippet(snippet: Dict, ldc_path: str,
+                    frontend_ver: Optional[Tuple[int, ...]] = None,
                     stop_event: threading.Event = threading.Event()
                     ) -> Dict:
     code = snippet["code"]
     name = snippet["name"]
     if not code.strip():
         return {"name": name, "success": True, "strategy": "empty"}
+    req = parse_requires(code)
+    if req and not (frontend_ver and version_ge(frontend_ver, req)):
+        want = ".".join(map(str, req))
+        return {"name": name, "success": True, "skipped": True,
+                "strategy": f"needs dmd>={want}"}
     if is_pseudo(code):
         return {"name": name, "success": True, "strategy": "pseudo"}
     if is_quick_ref(code):
@@ -251,7 +286,9 @@ def verify_snippet(snippet: Dict, ldc_path: str,
 
 def print_result(result: Dict, verbose: bool):
     with print_lock:
-        if result["success"]:
+        if result.get("skipped"):
+            print(f"  SKIP  {result['name']:50s} [{result['strategy']}]")
+        elif result["success"]:
             if verbose:
                 print(f"  PASS  {result['name']:50s} [{result['strategy']}]")
         else:
@@ -279,8 +316,11 @@ def main():
         sys.exit(1)
 
     ver = subprocess.run([ldc_path, "--version"], capture_output=True, text=True, timeout=5)
+    frontend_ver = parse_frontend_version(ver.stdout)
     print(f"Compiler: {ldc_path}")
     print(f"Version:  {ver.stdout.split(chr(10))[0]}")
+    if frontend_ver:
+        print(f"Frontend: DMD v{'.'.join(map(str, frontend_ver))}")
     print()
 
     md_files = sorted(SKILLS_DIR.glob("*.md"))
@@ -300,7 +340,7 @@ def main():
     results = []
     stop_event = threading.Event()
     with ThreadPoolExecutor(max_workers=workers) as ex:
-        futures = {ex.submit(verify_snippet, b, ldc_path, stop_event): b
+        futures = {ex.submit(verify_snippet, b, ldc_path, frontend_ver, stop_event): b
                    for b in all_blocks}
         for i, fut in enumerate(as_completed(futures), 1):
             r = fut.result()
@@ -315,7 +355,9 @@ def main():
                 with print_lock:
                     print(f"  ... {i}/{total}", file=sys.stderr)
 
-    passed = sum(1 for r in results if r["success"] and r["strategy"] != "cancelled")
+    skipped = sum(1 for r in results if r.get("skipped"))
+    passed = sum(1 for r in results if r["success"] and not r.get("skipped")
+                 and r["strategy"] != "cancelled")
     cancelled = sum(1 for r in results if r["strategy"] == "cancelled")
     failed = sum(1 for r in results if not r["success"])
     tested = passed + failed
@@ -323,6 +365,8 @@ def main():
     print(f"\n{'='*60}")
     print(f"  PASSED: {passed}/{tested}")
     print(f"  FAILED: {failed}/{tested}")
+    if skipped:
+        print(f"  SKIPPED: {skipped}/{total} (version-gated)")
     if cancelled:
         print(f"  CANCELLED: {cancelled}/{total}")
     print(f"{'='*60}")

@@ -600,14 +600,21 @@ rb = 100;
 ### Exception Handling
 
 ```d
-import std.exception : enforce, assumeUnique;
+import std.exception : enforce, errnoEnforce, assumeUnique;
+import core.stdc.stdio : fopen, fclose, FILE;
 
 int val = 42;
 
-// Enforce condition
-enforce(val > 0, "Error message");
+// enforce — logical/precondition checks; throws a plain Exception
+enforce(val > 0, "value must be positive");
 
-// Assume unique (for ownership transfer)
+// errnoEnforce — for C/system calls that set errno on failure;
+// throws ErrnoException with the OS error string appended via strerror
+FILE* f = fopen("/dev/null", "r");
+errnoEnforce(f !is null, "could not open file");
+fclose(f);
+
+// assumeUnique — transfer ownership of a mutable array to an immutable one
 auto arr = [1, 2, 3];
 auto ptr = assumeUnique(arr);
 ```

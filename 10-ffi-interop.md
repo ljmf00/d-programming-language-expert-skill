@@ -642,6 +642,29 @@ void main() {
 }
 ```
 
+C functions signal failure via their return value (`NULL`, `-1`, …) and set
+`errno` to identify the cause. Use `errnoEnforce` from `std.exception` — it
+snapshots `errno` at the moment of failure and throws an `ErrnoException` whose
+message includes the OS error string (via `strerror`). A plain `enforce` here
+would throw a bare `Exception` and silently discard that OS-level reason.
+
+```d
+import std.exception : errnoEnforce;
+import core.stdc.stdio : fopen, fclose, FILE;
+
+void main() {
+    // Bad — discards the OS reason; errno is not captured:
+    // FILE* f = fopen("config", "r");
+    // enforce(f !is null, "could not open config");
+
+    // Good — ErrnoException carries strerror(errno), e.g.
+    // "could not open config (No such file or directory)":
+    FILE* f = fopen("/dev/null", "r");
+    errnoEnforce(f !is null, "could not open config");
+    scope(exit) fclose(f);
+}
+```
+
 ### POSIX signal
 
 ```d

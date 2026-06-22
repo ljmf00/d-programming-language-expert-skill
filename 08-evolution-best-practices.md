@@ -280,6 +280,24 @@ void process(string data) {
 }
 ```
 
+For C/system calls that signal failure through `errno`, use `errnoEnforce`
+instead — it captures `errno` and appends the OS error string to the message.
+Plain `enforce` silently drops that information.
+
+```d
+import std.exception : errnoEnforce;
+import core.stdc.stdio : fopen, fclose, FILE;
+
+// Bad: throws a bare Exception with no OS-level reason
+// FILE* f = fopen("config", "r");
+// enforce(f !is null, "could not open config");
+
+// Good: throws ErrnoException — e.g. "could not open config (No such file or directory)"
+FILE* f = fopen("/dev/null", "r");
+errnoEnforce(f !is null, "could not open config");
+fclose(f);
+```
+
 ### Unit Tests as Living Documentation
 
 ```d

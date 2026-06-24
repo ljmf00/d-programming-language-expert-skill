@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "d-programming-language-expert-skill",
+  "description": "The D programming language expert skill.",
+  "owner": {
+    "name": "Luís Ferreira",
+    "url": "https://github.com/ljmf00"
+  },
+  "plugins": [
+    {
+      "name": "d-programming-language-expert",
+      "source": "./",
+      "description": "D programming language expert: syntax and semantics, Phobos, druntime, templates and metaprogramming, ranges, concurrency, tooling, and language evolution.",
+      "author": {
+        "name": "Luís Ferreira",
+        "url": "https://github.com/ljmf00"
+      }
+    }
+  ]
+}

@@ -9,6 +9,20 @@ The skill activates when you work with `.d`/`.di` files, `dub.sdl`/`dub.json`,
 Phobos (`std.*`) or druntime (`core.*`) imports, or ask about DMD/LDC, DIPs, and
 D-specific idioms.
 
+## Installation
+
+Install it into Claude Code as a plugin, straight from this repository:
+
+```
+/plugin marketplace add ljmf00/d-programming-language-expert-skill
+/plugin install d-programming-language-expert@d-programming-language-expert-skill
+```
+
+The first command registers this repo as a marketplace; the second installs the
+skill from it. Claude then activates the skill automatically on D-related work
+(see below). Run `/plugin marketplace update d-programming-language-expert-skill`
+to pull later changes.
+
 ## Layout
 
 - [SKILL.md](./SKILL.md) -- entry point and table of subskills.

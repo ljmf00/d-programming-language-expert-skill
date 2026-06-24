@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "d-programming-language-expert",
+  "displayName": "D Programming Language Expert",
+  "version": "1.0.0",
+  "description": "D programming language expert: syntax and semantics, Phobos, druntime, templates and metaprogramming, ranges, concurrency, tooling, and language evolution.",
+  "author": {
+    "name": "Luís Ferreira",
+    "url": "https://github.com/ljmf00"
+  },
+  "homepage": "https://github.com/ljmf00/d-programming-language-expert-skill",
+  "repository": "https://github.com/ljmf00/d-programming-language-expert-skill",
+  "license": "MIT",
+  "keywords": [
+    "d",
+    "dlang",
+    "phobos",
+    "druntime",
+    "dmd",
+    "ldc",
+    "metaprogramming",
+    "skill"
+  ]
+}

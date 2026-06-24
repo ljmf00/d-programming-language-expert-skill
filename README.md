@@ -25,10 +25,11 @@ to pull later changes.
 
 ## Layout
 
-- [SKILL.md](./SKILL.md) -- entry point and table of subskills.
-- `00-d-language-index.md` -- high-level overview; start here.
-- `01-` to `14-*.md` -- self-contained knowledge modules, one per topic.
-- [verify.py](./verify.py) -- checks the code snippets across the subskills compile.
+- `skills/d-programming-language-expert/` -- the skill itself:
+  - [SKILL.md](./skills/d-programming-language-expert/SKILL.md) -- entry point and table of subskills.
+  - `00-d-language-index.md` -- high-level overview; start here.
+  - `01-` to `14-*.md` -- self-contained knowledge modules, one per topic.
+  - [verify.py](./skills/d-programming-language-expert/verify.py) -- checks the code snippets across the subskills compile.
 
 Each module was authored from authoritative sources (the D language spec, the
 LDC compiler, and the Phobos source) and its snippets verified against LDC.

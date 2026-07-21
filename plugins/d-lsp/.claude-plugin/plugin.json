@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "lsp",
+  "name": "d-lsp",
   "version": "1.0.0",
   "description": "D language server integration via serve-d, providing code intelligence (go-to-definition, references, hover, symbols) for .d and .di files.",
   "author": {

@@ -17,8 +17,8 @@
       }
     },
     {
-      "name": "lsp",
-      "source": "./plugins/lsp",
+      "name": "d-lsp",
+      "source": "./plugins/d-lsp",
       "description": "D language server integration via serve-d, providing code intelligence (go-to-definition, references, hover, symbols) for .d and .di files.",
       "author": {
         "name": "Luís Ferreira",

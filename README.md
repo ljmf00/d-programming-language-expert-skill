@@ -15,12 +15,12 @@ Install it into Claude Code as a plugin, straight from this repository:
 
 ```
 /plugin marketplace add ljmf00/d-programming-language-expert-skill
-/plugin install d-programming-language-expert@d-programming-language-experts
+/plugin install dlang-skills@d-programming-language-experts
 ```
 
 The first command registers this repo as a marketplace; the second installs the
-skill from it. Claude then activates the skill automatically on D-related work
-(see below). Run `/plugin marketplace update d-programming-language-experts`
+`dlang-skills` plugin from it. Claude then activates each skill automatically on
+D-related work (see below). Run `/plugin marketplace update d-programming-language-experts`
 to pull later changes.
 
 ## Layout

@@ -23,6 +23,17 @@ The first command registers this repo as a marketplace; the second installs the
 D-related work (see below). Run `/plugin marketplace update d-programming-language-experts`
 to pull later changes.
 
+For code intelligence on D sources (go-to-definition, references, hover), also
+install the `lsp` plugin, which wires [serve-d](https://github.com/Pure-D/serve-d)
+into Claude Code's LSP tool (`serve-d` must be on your `PATH`):
+
+```
+/plugin install lsp@d-programming-language-experts
+```
+
+The server logs to `serve-d.log` in the plugin's data directory (managed by
+Claude Code under `~/.claude`, persists across plugin updates).
+
 ## Layout
 
 - `skills/d-programming-language-expert/` -- the skill itself:
@@ -30,6 +41,8 @@ to pull later changes.
   - `00-d-language-index.md` -- high-level overview; start here.
   - `01-` to `14-*.md` -- self-contained knowledge modules, one per topic.
   - [verify.py](./skills/d-programming-language-expert/verify.py) -- checks the code snippets across the subskills compile.
+- `plugins/lsp/` -- the `lsp` plugin: [.lsp.json](./plugins/lsp/.lsp.json)
+  configures serve-d as the language server for `.d`/`.di` files.
 
 Each module was authored from authoritative sources (the D language spec, the
 LDC compiler, and the Phobos source) and its snippets verified against LDC.

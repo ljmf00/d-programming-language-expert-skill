@@ -15,6 +15,15 @@
         "name": "Luís Ferreira",
         "url": "https://github.com/ljmf00"
       }
+    },
+    {
+      "name": "lsp",
+      "source": "./plugins/lsp",
+      "description": "D language server integration via serve-d, providing code intelligence (go-to-definition, references, hover, symbols) for .d and .di files.",
+      "author": {
+        "name": "Luís Ferreira",
+        "url": "https://github.com/ljmf00"
+      }
     }
   ]
 }

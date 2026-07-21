@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "lsp",
+  "version": "1.0.0",
+  "description": "D language server integration via serve-d, providing code intelligence (go-to-definition, references, hover, symbols) for .d and .di files.",
+  "author": {
+    "name": "Luís Ferreira",
+    "url": "https://github.com/ljmf00"
+  },
+  "homepage": "https://github.com/ljmf00/d-programming-language-expert-skill",
+  "repository": "https://github.com/ljmf00/d-programming-language-expert-skill",
+  "license": "MIT",
+  "keywords": [
+    "d",
+    "dlang",
+    "lsp",
+    "serve-d",
+    "language-server"
+  ]
+}

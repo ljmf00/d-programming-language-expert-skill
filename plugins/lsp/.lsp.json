@@ -1,0 +1,10 @@
+{
+  "d": {
+    "command": "serve-d",
+    "args": ["--logfile", "${CLAUDE_PLUGIN_DATA}/serve-d.log"],
+    "extensionToLanguage": {
+      ".d": "d",
+      ".di": "d"
+    }
+  }
+}

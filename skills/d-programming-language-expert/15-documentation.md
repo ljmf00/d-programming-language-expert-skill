@@ -20,6 +20,7 @@ Guide to D's built-in documentation system: DDoc comment syntax, standard sectio
 
 - [DDoc Documentation Basics](#ddoc-documentation-basics)
 - [DDoc Params/Returns/Throws](#ddoc-paramsreturnsthrows)
+- [Writing Guidelines](#writing-guidelines)
 - [DDoc Macros: D, I, B](#ddoc-macros-d-i-b)
 - [DDoc Macros: REF and LINK2](#ddoc-macros-ref-and-link2)
 - [DDoc Sections and Subrefs](#ddoc-sections-and-subrefs)
@@ -96,6 +97,54 @@ double divideNumbers(double numerator, double denominator) {
     return numerator / denominator;
 }
 ```
+
+## Writing Guidelines
+
+### Returns: Describe the Value, Not Only Its Type
+
+The DDoc spec says `Returns:` "explains the return value", and the D Style Guide asks for a `Params:` and `Returns:` section on every public function. Its own example reads `true if the number is positive, 0 otherwise`: the sentence is about what the value means. Put the emphasis there -- what a boundary value (`0`, `-1`, empty, `length`) signals and what the caller must do about it. Naming the type alongside is welcome, and pulls real weight when the signature is `auto` or a long template instantiation that the reader cannot see. Only a `void` return goes undocumented.
+
+```d
+// Thin: names the type and stops
+//   Returns: a size_t
+
+/**
+ * Finds `needle` in `haystack`.
+ *
+ * Params:
+ *    haystack = text to scan; empty is allowed
+ *    needle = character to look for
+ *
+ * Returns: index of the first `needle`, or `haystack.length` when it is
+ * absent -- either way a valid slice bound, so `haystack[0 .. r]` is safe.
+ */
+size_t indexOf(string haystack, char needle) {
+    foreach (i, c; haystack)
+        if (c == needle) return i;
+    return haystack.length;
+}
+
+/**
+ * Splits `line` at the first `sep`.
+ *
+ * Returns: a `Tuple!(string, "head", string, "tail")` holding the text
+ * before and after `sep`; `tail` is empty when `sep` is absent. The
+ * signature is `auto`, so the type is worth spelling out here.
+ */
+auto splitOnce(string line, char sep) {
+    import std.typecons : tuple;
+    auto i = indexOf(line, sep);
+    auto tail = i < line.length ? line[i + 1 .. $] : "";
+    return tuple!("head", "tail")(line[0 .. i], tail);
+}
+
+unittest {
+    assert(splitOnce("k=v", '=').head == "k");
+    assert(splitOnce("kv", '=').tail == "");
+}
+```
+
+The same applies to `Params:`: units, ownership, and what `null` or empty means are the parts the signature cannot say.
 
 ## DDoc Macros: D, I, B
 

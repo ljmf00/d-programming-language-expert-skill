@@ -3,10 +3,10 @@ name: d-lang-gotchas
 description: >-
   D language gotchas and AI-relevant pitfalls: array slice reference semantics,
   string immutability, foreach ref aliasing, struct vs class value/reference,
-  shared threading model, DIP 1000 scope status, GC closure pressure, hidden
-  frame pointers on nested structs and functions (mark them static), and
-  default initialization rules. Load this to avoid the subtle mistakes that
-  most often appear in AI-generated D code.
+  shared threading model, DIP 1000 scope status, GC closure pressure, typeof
+  vs ReturnType on callables, hidden frame pointers on nested structs and
+  functions (mark them static), and default initialization rules. Load this
+  to avoid the subtle mistakes that most often appear in AI-generated D code.
 license: MIT
 metadata:
   topics: gotchas pitfalls memory safety concurrency idioms
@@ -26,6 +26,7 @@ Subtle behaviors that most often produce wrong or non-idiomatic AI-generated D c
 - [`shared` Does Not Mean Thread-Safe Access](#shared-does-not-mean-thread-safe-access)
 - [DIP 1000 `scope` Is Still Behind a Preview Flag](#dip-1000-scope-is-still-behind-a-preview-flag)
 - [GC Pressure from Closures](#gc-pressure-from-closures)
+- [`typeof` on a Callable Depends on What the Symbol Is](#typeof-on-a-callable-depends-on-what-the-symbol-is)
 - [Nested Structs and Functions: Mark `static` Unless They Use the Enclosing Context](#nested-structs-and-functions-mark-static-unless-they-use-the-enclosing-context)
 - [Default Initialization Rules](#default-initialization-rules)
 - [Array Append May Reallocate](#array-append-may-reallocate)
@@ -224,6 +225,30 @@ void main() {
 ```
 
 For `@nogc` code, avoid closures over locals or use function pointers with explicit context passed as a parameter. `std.functional.partial` and `std.functional.curry` can help but also involve allocations.
+
+---
+
+## `typeof` on a Callable Depends on What the Symbol Is
+
+`typeof(sym)` answers a different question depending on the kind of symbol: for a plain function it is the function *type* (not usable as a variable type), for a `@property` it is the return type because the property is called implicitly, and for a delegate or function-pointer variable it is the callable itself. Adding `()` shifts each answer again. `ReturnType!sym` asks one question -- what does a call yield -- and answers it the same way for all three.
+
+```d
+import std.traits : ReturnType;
+
+int f() { return 1; }
+@property int p() { return 1; }
+int delegate() dg;
+
+static assert(is(typeof(f) == function));         // function type, not a variable type
+static assert(is(typeof(p) == int));              // @property is called implicitly
+static assert(is(typeof(dg) == int delegate()));  // the delegate itself, not its result
+
+static assert(is(ReturnType!f == int));
+static assert(is(ReturnType!p == int));
+static assert(is(ReturnType!dg == int));
+```
+
+Prefer `ReturnType!sym` when declaring a variable to receive a call's result; it also reads at the declaration without the call's arguments in scope. `typeof(call(args))` is still the right tool when the return type depends on the arguments (a template function), where no single `ReturnType!fn` exists.
 
 ---
 

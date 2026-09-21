@@ -61,6 +61,8 @@ module my_package.my_module;
 // Types (structs, classes, enums, interfaces): PascalCase
 struct MyStruct { }
 class MyClass {
+    // Leading underscore: for symbols meant to be internal, optional even then.
+    // It does not hide anything from DDoc; `private` does.
     private int _privateField;
 }
 enum MyEnum { none }

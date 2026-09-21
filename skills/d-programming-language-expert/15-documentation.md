@@ -4,8 +4,9 @@ description: >-
   D documentation with DDoc: comment syntax, Params/Returns/Throws
   sections, formatting and reference macros ($(D ...), $(REF ...),
   $(LINK2 ...)), section organization, embedded and extractable code
-  examples, generating HTML docs. Use when writing or reviewing D
-  documentation comments.
+  examples, generating HTML docs, and writing guidelines (Returns: meaning,
+  underscore vs visibility). Use when writing or reviewing D documentation
+  comments.
 license: MIT
 metadata:
   topics: ddoc documentation comments macros doctest
@@ -145,6 +146,32 @@ unittest {
 ```
 
 The same applies to `Params:`: units, ownership, and what `null` or empty means are the parts the signature cannot say.
+
+### Leading Underscore Signals Internal; Visibility Hides
+
+A leading underscore belongs on symbols meant to be internal -- private members, implementation helpers -- and is optional even there. The D Style Guide puts it as "names do not begin with an underscore unless they are private". It is a signal to readers, not a mechanism: DDoc does not skip underscored names.
+
+What controls the generated docs is visibility and the doc comment. `private` declarations are never emitted, whatever their name and even when commented. `public`, `package` and `protected` declarations are emitted only when they carry a doc comment. So keep internals `private` or `package`, and for a symbol that must be public for technical reasons (a mixin or template helper that other modules instantiate), combine the underscore with no doc comment: the name says "internal" and DDoc leaves it out.
+
+```d
+/// Public API: documented, so it appears in the generated docs.
+size_t keyLength(string key) { return key.length; }
+
+// Internal helper: `private` keeps it out of the docs whatever it is named.
+private size_t hashKey(string key) { return key.length * 31; }
+
+// Must be public so the mixin below can reach it from other modules, but it
+// is not part of the API. The underscore tells readers "internal"; leaving
+// it without a doc comment keeps DDoc from emitting it.
+size_t _registerImpl(string name) { return name.length ? 1 : 0; }
+
+/// Registers `name` at compile time.
+mixin template Register(string name) {
+    enum registered = _registerImpl(name);
+}
+```
+
+Inside a comment the underscore means something else: `_name` stops `name` from being highlighted as a parameter, and the underscore is stripped from the output.
 
 ## DDoc Macros: D, I, B
 

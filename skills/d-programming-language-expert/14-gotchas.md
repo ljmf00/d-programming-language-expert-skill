@@ -3,7 +3,8 @@ name: d-lang-gotchas
 description: >-
   D language gotchas and AI-relevant pitfalls: array slice reference semantics,
   string immutability, foreach ref aliasing, struct vs class value/reference,
-  shared threading model, DIP 1000 scope status, GC closure pressure, and
+  shared threading model, DIP 1000 scope status, GC closure pressure, hidden
+  frame pointers on nested structs and functions (mark them static), and
   default initialization rules. Load this to avoid the subtle mistakes that
   most often appear in AI-generated D code.
 license: MIT
@@ -25,6 +26,7 @@ Subtle behaviors that most often produce wrong or non-idiomatic AI-generated D c
 - [`shared` Does Not Mean Thread-Safe Access](#shared-does-not-mean-thread-safe-access)
 - [DIP 1000 `scope` Is Still Behind a Preview Flag](#dip-1000-scope-is-still-behind-a-preview-flag)
 - [GC Pressure from Closures](#gc-pressure-from-closures)
+- [Nested Structs and Functions: Mark `static` Unless They Use the Enclosing Context](#nested-structs-and-functions-mark-static-unless-they-use-the-enclosing-context)
 - [Default Initialization Rules](#default-initialization-rules)
 - [Array Append May Reallocate](#array-append-may-reallocate)
 - [UFCS Lookup Is Module-Scoped](#ufcs-lookup-is-module-scoped)
@@ -222,6 +224,50 @@ void main() {
 ```
 
 For `@nogc` code, avoid closures over locals or use function pointers with explicit context passed as a parameter. `std.functional.partial` and `std.functional.curry` can help but also involve allocations.
+
+---
+
+## Nested Structs and Functions: Mark `static` Unless They Use the Enclosing Context
+
+Whether a nested declaration carries a hidden context pointer is decided by the compiler, not by you, and the rules differ by placement:
+
+- A struct declared inside a *function* (or `unittest`) with any non-static method, and any nested function, captures the enclosing stack frame unless `static` -- even when the body never touches an outer local. The struct grows by a pointer; the function becomes a `delegate` instead of a `function`.
+- A struct declared inside another *struct or class* does not get a pointer to the enclosing instance; only nested *classes* do (the `.outer` reference), unless `static`.
+
+```d
+import std.traits : isDelegate, isFunctionPointer;
+
+struct Config {
+    bool enabled;
+
+    // Field-only struct inside an aggregate: no frame to capture today,
+    // but `static` records that it never needs the enclosing instance.
+    static struct Traces { bool upload; uint retentionDays; }
+
+    static assert(!__traits(isNested, Traces));
+}
+
+void runPass() {
+    int itemsProcessed;
+
+    // Neither reads `itemsProcessed`, yet both capture the frame.
+    struct Stats { int seen; int total() { return seen; } }
+    bool shouldSkip(string key) { return key.length == 0; }
+
+    static assert(__traits(isNested, Stats));
+    static assert(Stats.sizeof > int.sizeof);
+    static assert(isDelegate!(typeof(&shouldSkip)));
+
+    static struct FreeStats { int seen; int total() { return seen; } }
+    static bool skipStatic(string key) { return key.length == 0; }
+
+    static assert(!__traits(isNested, FreeStats));
+    static assert(FreeStats.sizeof == int.sizeof);
+    static assert(isFunctionPointer!(typeof(&skipStatic)));
+}
+```
+
+Default every nested struct, class, and function that does not use the enclosing context to `static`, including structs nested in aggregates where it is a no-op today. `static` turns "does not need the context" into a promise the compiler checks: an accidental access becomes a compile error instead of a silent extra pointer, and the layout no longer depends on the compiler's nesting heuristic or on a future change to it.
 
 ---
 

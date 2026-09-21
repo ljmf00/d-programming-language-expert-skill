@@ -72,6 +72,7 @@ void myFunction() { }
 int myVariable = 0;
 
 // Constants: camelCase, like variables (D Style Guide)
+// UPPER_SNAKE_CASE is a C habit some projects keep; follow the surrounding code
 enum maxSize = 100;
 
 // Enum members: camelCase

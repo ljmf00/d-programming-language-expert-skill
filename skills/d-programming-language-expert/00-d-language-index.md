@@ -27,9 +27,10 @@ metadata:
 | [09-runtime-internals.md](09-runtime-internals.md)                 | **Runtime Internals**           | GC API, TypeInfo/`typeid`, `Object`/`Throwable`, array internals, `core.lifetime`        |
 | [10-ffi-interop.md](10-ffi-interop.md)                             | **FFI & Interop**               | `extern(C)`, `extern(C++)`, `extern(Objective-C)`, Better C mode, calling conventions    |
 | [11-performance-optimization.md](11-performance-optimization.md)   | **Performance Optimization**    | `core.simd`, LDC inline/noinline, SoA vs AoS layout, PGO, LTO                            |
-| [12-testing-documentation.md](12-testing-documentation.md)         | **Testing & Documentation**     | `unittest` patterns, contracts (`in`/`out`), DDoc generation                             |
+| [12-testing.md](12-testing.md)                                     | **Testing**                     | `unittest` patterns, contracts (`in`/`out`), invariants, `assert` messages               |
 | [13-async-event-driven.md](13-async-event-driven.md)               | **Async & Event-Driven**        | Fiber schedulers, `Generator!T`, POSIX epoll/kqueue, event loop patterns                 |
 | [14-gotchas.md](14-gotchas.md)                                     | **D Gotchas**                   | AI-relevant pitfalls: slice semantics, `string` immutability, `shared`, DIP 1000         |
+| [15-documentation.md](15-documentation.md)                         | **Documentation (DDoc)**        | DDoc comments, `Params:`/`Returns:` sections, macros, embedded examples                  |
 
 ## Task → Subskill
 
@@ -46,7 +47,8 @@ metadata:
 | Debug GC / runtime behavior            | [Runtime Internals](09-runtime-internals.md)                   |
 | Call C/C++/ObjC from D                 | [FFI & Interop](10-ffi-interop.md)                             |
 | Optimize for speed / SIMD              | [Performance Optimization](11-performance-optimization.md)     |
-| Write tests / DDoc                     | [Testing & Documentation](12-testing-documentation.md)         |
+| Write tests                            | [Testing](12-testing.md)                                       |
+| Write documentation comments (DDoc)    | [Documentation (DDoc)](15-documentation.md)                    |
 | Async / event-driven I/O               | [Async & Event-Driven](13-async-event-driven.md)               |
 | Avoid subtle D bugs                    | [D Gotchas](14-gotchas.md)                                     |
 

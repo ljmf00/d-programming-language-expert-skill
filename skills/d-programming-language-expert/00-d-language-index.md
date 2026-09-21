@@ -69,8 +69,8 @@ enum MyEnum { none }
 void myFunction() { }
 int myVariable = 0;
 
-// Constants: UPPER_SNAKE_CASE
-const int MAX_SIZE = 100;
+// Constants: camelCase, like variables (D Style Guide)
+enum maxSize = 100;
 
 // Enum members: camelCase
 enum Color { red, green, blue }
